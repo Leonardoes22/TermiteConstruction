@@ -41,12 +41,20 @@ public class TermiteBrain : MonoBehaviour
             Vector3 input = GetBaseInput();
             if (input == Vector3.left || input == Vector3.right) {
 
+                print("Command 1");
+                GetComponent<FSM>().SelectEvent(1);
+                
+
                 dAngle = 90 * input.x;
 
                 currentAngle = transform.eulerAngles.y;
                 totalTime = 0;
                 turning = true;
             } else if (input == Vector3.forward ) {
+
+                print("Command 0");
+                GetComponent<FSM>().SelectEvent(0);
+                
 
                 destiny = TileSystem.GetNeighbourCentre(transform.position, transform.rotation * Vector3.forward);
 
@@ -127,7 +135,6 @@ public class TermiteBrain : MonoBehaviour
 
             transform.eulerAngles = Vector3.up * (currentAngle + dAngle);
             turning = false;
-            print(transform.eulerAngles);
         }
 
 
