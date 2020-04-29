@@ -5,6 +5,10 @@ TagManager:
   serializedVersion: 2
   tags:
   - Text
+  - StateButton
+  - Tile
+  - CustomMesh
+  - SceneInfo
   layers:
   - Default
   - TransparentFX

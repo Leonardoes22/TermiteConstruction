@@ -1,38 +1,26 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Xml;
-using System.Xml.Serialization;
 using System.IO;
 using System.Xml.Linq;
-using System.Linq;
+using System;
+using System.Runtime.InteropServices;
 
-
-public class FSM : MonoBehaviour
+public class FSM
 {
-    List<Transition> transitionList = new List<Transition>(); // Lista de transições
-    Dictionary<int, State> statesConteiner = new Dictionary<int, State>(); // Dicionário de estados
-    Dictionary<int, Event> eventsConteiner = new Dictionary<int, Event>(); // Dicionário de eventos
+    public List<Transition> transitionList = new List<Transition>(); // Lista de transições
+    public Dictionary<int, State> statesConteiner = new Dictionary<int, State>(); // Dicionário de estados
+    public Dictionary<int, Event> eventsConteiner = new Dictionary<int, Event>(); // Dicionário de eventos
 
-    State currentState; // Estado atual
+    public State currentState; // Estado atual
+    public Coord size;
 
     // Start is called before the first frame update
-    void Start()
+    public FSM(string automaton)
     {
-        LoadSupervisor("supCSync.xml");
-        print("Initial: "+ currentState);
-
-        foreach (KeyValuePair<int, State> estado in statesConteiner) {
-            print(estado);
-        }
+        LoadSupervisor(automaton);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-       
-
-    }
 
     // Carrega arquivo xml com supervisor e gera Estados, Eventos e Transições 
     void LoadSupervisor(string file) {
@@ -41,9 +29,20 @@ public class FSM : MonoBehaviour
         var supervisorsfolder = Directory.GetCurrentDirectory() + "\\Assets\\Resources\\Supervisors\\";
         var supPath = supervisorsfolder + file;
 
+        
+
         //Nó (automata)
         XElement supervisor = XElement.Load(supPath);
 
+        //Obter forma do grid
+        string name = (string)supervisor.Element("Automaton").Attribute("name"); // Nome do Automaton
+        string[] parse = name.Split(new string[] { "||" }, StringSplitOptions.None); // Parser
+
+        size.x = int.Parse(parse[parse.Length - 2]);
+        size.y = int.Parse(parse[parse.Length - 1]);
+
+
+        //Carregar informações
         IEnumerable events = supervisor.Descendants("Event"); // Enumerável de eventos
         IEnumerable states = supervisor.Descendants("State"); // Enumerável de estados
         IEnumerable transitions = supervisor.Descendants("Transition"); // Enumerável de transições
@@ -64,7 +63,10 @@ public class FSM : MonoBehaviour
             int stateId = (int)stateData.Attribute("id");
             string stateName = (string)stateData.Attribute("name");
 
-            State stateCaster = new State(stateId, stateName);
+            State stateCaster = new State(stateId, stateName, size);
+            if ((string)stateData.Attribute("accepting") == "true") {
+                stateCaster.marked = true;
+            }
 
             if((string)stateData.Attribute("initial") == "true") {
                 currentState = stateCaster;
@@ -88,16 +90,14 @@ public class FSM : MonoBehaviour
     }
 
 
-
     //Função temporária de apoio
-    public void SelectEvent(int id) {
+    public void CallEvent(int id) {
         TriggerEvent(eventsConteiner[id]);
     }
 
 
     //Verifica (e dispara) se há alguma transição disponível para o estado atual dado o evento ocorrido
     void TriggerEvent(Event e) {
-        print("Triggered:" + e);
 
         foreach (Transition trans in transitionList) {
             if (e.id == trans.evento) {
@@ -112,12 +112,8 @@ public class FSM : MonoBehaviour
 
     //Aplica a função de transição
     void FireTransition(Transition t) {
-        print("Fired:" + t);
         currentState = statesConteiner[t.dest];
-        print("State:" + currentState);
     }
-
-
 
 
     //FSM Classes
@@ -142,7 +138,7 @@ public class FSM : MonoBehaviour
     }
 
     //Transition
-     public class Transition {
+    public class Transition {
 
         public int dest; // Estado de destino
         public int evento; // Evento gatilho
@@ -170,17 +166,19 @@ public class FSM : MonoBehaviour
 
         public string qStr; //Why ???
         public string sStr; //Robô carregado?
-        public int x, y; //Posição no Grid
-        public int[,] heightMap; //Mapa de alturas 
+        public bool hasTile; //Robô carregado (alternative)
+        int x, y; //Posição no Grid
+        public HeightMap heightMap; //Mapa de alturas 
 
         public bool initial; //Estado inicial?
         public bool marked; //Estado Marcado?
 
         // Construtor Manual 
-        public State(int id, bool carregado, int x, int y, int[,] heights) {
+        public State(int id, bool carregado, int x, int y, HeightMap heights) {
 
             this.id = id;
             this.sStr = carregado ? "S1" : "S0";
+            this.hasTile = carregado;
             this.x = x;
             this.y = y;
             this.heightMap = heights;
@@ -188,33 +186,46 @@ public class FSM : MonoBehaviour
         }
 
         // Construtor XML
-        public State(int id, string name) {
-
-            int[] size = { 1, 2 }; // Variável temporária, resolve formato do grid
+        public State(int id, string name, Coord size) {
 
             string[] stateInfo = name.Split('.');
 
             this.id = id;
             this.qStr = stateInfo[0];
             this.sStr = stateInfo[1];
+            this.hasTile = sStr == "S1";
             this.x = int.Parse(stateInfo[2]);
             this.y = int.Parse(stateInfo[3]);
+            this.heightMap = new HeightMap(size.x, size.y);
 
-            this.heightMap = new int[size[0], size[1]];
-
-            for (int i = 0; i < size[0]; i++) {
-                for (int j = 0; j < size[1]; j++) {
-                    int index = 4 + (size[0] * i + j);
-                        heightMap[i, j] = int.Parse(stateInfo[index]);
+            for (int i = 1; i < size.x + 1; i++) {
+                for (int j = 1; j < size.y + 1; j++) {
+                    int index = 3 + (size.x * (i-1) + j);
+                    heightMap[i, j] = int.Parse(stateInfo[index]);
                 }
             }
-
         }
 
         // Sobrescreve método ToString(), não está final
         public override string ToString() {
-            return sStr + "." + x + "." + y;
+
+            string name = sStr + "." + x + "." + y;
+
+            for (int i = 1; i < heightMap.Shape.x + 1; i++) {
+                for (int j = 1; j < heightMap.Shape.y + 1; j++) {
+                    name += "." + heightMap[i, j] ;
+                }
+            }
+
+
+            return name;
         }
+
+        // Retorna a posição do robô
+        public Coord GetPosition() {
+            return new Coord(x,y);
+        }
+
 
 
     }

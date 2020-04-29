@@ -6,7 +6,7 @@ public class CameraController : MonoBehaviour
 {
     
 
-    public float mainSpeed = 30.0f; //Regular Speed
+    public float mainSpeed = 300.0f; //Regular Speed
     public float scrollSpeed = 200.0f; //Zoom speed
     float shiftAdd = 75.0f; //Amount to accelerate when shift is pressed
     float maxShift = 300.0f; //Maximum speed when holding shift

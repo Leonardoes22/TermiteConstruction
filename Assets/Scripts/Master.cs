@@ -11,8 +11,8 @@ public class Master : MonoBehaviour
     void Start()
     {
         TileSystem.SetTileType(floor);
-        TileSystem.GenerateWorld(5, 5);
-
+        TileSystem.GenerateWorld(1, 2);
+        /*
         TileSystem.PlaceTile(3, 3);
         TileSystem.PlaceTile(2, 2);
         TileSystem.PlaceTile(2, 2);
@@ -20,8 +20,9 @@ public class Master : MonoBehaviour
         TileSystem.PlaceTile(2, 1);
         TileSystem.PlaceTile(2, 1);
         TileSystem.PlaceTile(1, 1);
+        
         termiteBot.GetComponent<TermiteBotBrain>().InitPosition();
-
+        */
     }
 
     // Update is called once per frame

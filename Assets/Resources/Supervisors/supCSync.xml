@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
 <Automata major="0" minor="9" name="Untitled">
-<Automaton name="GR||GAdd_1X||E_H11||E_H12||E_a11||E_a12||E_Mrl_1||G_B||y||x||h11||h12" type="Plant">
+<Automaton name="GR||GAdd_1X||E_H11||E_H12||E_a11||E_a12||E_Mrl_1||G_B||y||x||h11||h12||1||2" type="Plant">
 	<Events>
 		<Event id="0" label="a11"/>
 		<Event id="1" label="a12"/>

@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TermiteBrain : MonoBehaviour
-{
-
+public class TermiteBotBrain : MonoBehaviour {
     bool turning, walking;
     float dAngle, currentAngle;
     float turningTime = .2f;
@@ -15,14 +13,13 @@ public class TermiteBrain : MonoBehaviour
     bool hasTile = false;
 
     // Start is called before the first frame update
-    void Start()
-    {
-        
+    void Start() {
+
+
     }
 
     // Update is called once per frame
-    void Update()
-    {
+    void Update() {
 
         if (turning) {
 
@@ -37,24 +34,18 @@ public class TermiteBrain : MonoBehaviour
 
             transform.position = TileSystem.GetTileCentre(transform.position);
 
+            int command = Random.Range(-1, 4);
 
-            Vector3 input = GetBaseInput();
-            if (input == Vector3.left || input == Vector3.right) {
 
-                print("Command 1");
-                GetComponent<FSM>().SelectEvent(1);
-                
+            if (command == -1 || command == 1) {
 
-                dAngle = 90 * input.x;
+                dAngle = 90 * command;
 
                 currentAngle = transform.eulerAngles.y;
                 totalTime = 0;
                 turning = true;
-            } else if (input == Vector3.forward ) {
 
-                print("Command 0");
-                GetComponent<FSM>().SelectEvent(0);
-                
+            } else if (command == 0) {
 
                 destiny = TileSystem.GetNeighbourCentre(transform.position, transform.rotation * Vector3.forward);
 
@@ -65,18 +56,18 @@ public class TermiteBrain : MonoBehaviour
                     walking = true;
                 }
 
-                
-            } else if(input == Vector3.back) {
-                
+
+            } else if (command == -2) {
+
                 if (hasTile) {
 
                     PlaceTile();
-                    
+
                 } else {
                     hasTile = true;
                     transform.Find("TermiteTile").GetComponent<MeshRenderer>().enabled = true;
                 }
-               
+
             }
 
         }
@@ -95,7 +86,7 @@ public class TermiteBrain : MonoBehaviour
         int targetHeight = TileSystem.gridData.height[targetCoord[0], targetCoord[1]];
         int height = TileSystem.gridData.height[coord[0], coord[1]];
 
-        if(targetHeight == height && position != target && !TileSystem.gridData.occupied[targetCoord[0], targetCoord[1]]) {
+        if (targetHeight == height && position != target && !TileSystem.gridData.occupied[targetCoord[0], targetCoord[1]]) {
             TileSystem.PlaceTile(targetCoord[0], targetCoord[1]);
 
             hasTile = false;
@@ -105,14 +96,14 @@ public class TermiteBrain : MonoBehaviour
         }
 
 
-        
+
 
     }
 
     private void WalkAnimation() {
 
-        if(totalTime < 1) {
-            totalTime += Time.deltaTime/walkTime;
+        if (totalTime < 1) {
+            totalTime += Time.deltaTime / walkTime;
             transform.LookAt(destiny);
             transform.position = Vector3.Lerp(movementOrigin, destiny, totalTime);
         } else {
@@ -121,45 +112,32 @@ public class TermiteBrain : MonoBehaviour
             TileSystem.gridData.Leave(movementOrigin);
             walking = false;
         }
-        
+
 
 
     }
 
     private void TurnAnimation() {
-        
-        if(totalTime < turningTime) {
+
+        if (totalTime < turningTime) {
             totalTime += Time.deltaTime;
-            transform.Rotate(Vector3.up, Time.deltaTime * dAngle/turningTime);
+            transform.Rotate(Vector3.up, Time.deltaTime * dAngle / turningTime);
         } else {
 
             transform.eulerAngles = Vector3.up * (currentAngle + dAngle);
             turning = false;
+            print(transform.eulerAngles);
         }
 
 
     }
 
+    public void InitPosition() {
 
-    private Vector3 GetBaseInput() {
-        Vector3 p_Velocity = new Vector3();
+        int[] initCoord = { Random.Range(1, TileSystem.length), Random.Range(1, TileSystem.length) };
+        Vector3 pos = TileSystem.GetTileCentre(TileSystem.gridData.tileCentres[initCoord[0], initCoord[1]]);
 
-        if (Input.GetKeyDown(KeyCode.UpArrow)) {
-            p_Velocity += new Vector3(0, 0, 1);
-        }
-
-        if (Input.GetKeyDown(KeyCode.DownArrow)) {
-            p_Velocity += new Vector3(0, 0, -1);
-        }
-
-        if (Input.GetKeyDown(KeyCode.LeftArrow)) {
-            p_Velocity += new Vector3(-1, 0, 0);
-        }
-
-        if (Input.GetKeyDown(KeyCode.RightArrow)) {
-            p_Velocity += new Vector3(1, 0, 0);
-        }
-
-        return p_Velocity;
+        transform.position = pos;
     }
+
 }
