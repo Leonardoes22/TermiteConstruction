@@ -288,7 +288,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_BoundingSphereOverride: {x: 3.0092666e-36, y: 1.009742e-28, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -368,6 +368,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -1504981713932161579, guid: b4c22c42b9ae17a4bbe1e5a9bd81f636,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 63e9555f7d81a724292e8cb477dfd27d, type: 2}
     - target: {fileID: -927199367670048503, guid: b4c22c42b9ae17a4bbe1e5a9bd81f636,
         type: 3}
       propertyPath: m_Name
@@ -792,22 +797,22 @@ PrefabInstance:
     - target: {fileID: -4216859302048453862, guid: 8fd049b0d13eea54192d737ad26daf53,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 4.0856207e-14
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 8fd049b0d13eea54192d737ad26daf53,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.0000000063573915
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 8fd049b0d13eea54192d737ad26daf53,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.14544001
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 8fd049b0d13eea54192d737ad26daf53,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.98936707
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 8fd049b0d13eea54192d737ad26daf53,
         type: 3}
@@ -827,7 +832,7 @@ PrefabInstance:
     - target: {fileID: -4216859302048453862, guid: 8fd049b0d13eea54192d737ad26daf53,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: -16.726002
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 8fd049b0d13eea54192d737ad26daf53,
         type: 3}
@@ -966,5 +971,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   master: {fileID: 1931013356}
-  isGrabbing: 0
-  isPlacing: 0
+  controllerInterface: {fileID: 0}
+--- !u!64 &2065634304
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2065634299}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -5293335269154574413, guid: b4c22c42b9ae17a4bbe1e5a9bd81f636, type: 3}

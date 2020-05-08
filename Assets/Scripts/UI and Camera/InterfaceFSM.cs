@@ -68,7 +68,7 @@ public class InterfaceFSM : MonoBehaviour {
                 string eventLabel = termiteBrain.supervisorio.eventsConteiner[eventId].label;
 
                 btn.GetComponentInChildren<Text>().text = eventLabel;
-                btn.GetComponent<Button>().onClick.AddListener(() => termiteBrain.StateButtonListener(eventId));
+                btn.GetComponent<Button>().onClick.AddListener(() => termiteBrain.hmiHandler.StateButtonListener(eventId));
             }
         }
 

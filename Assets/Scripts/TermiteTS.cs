@@ -7,7 +7,7 @@ public class TermiteTS : MonoBehaviour {
 
     //Grid Properties
     Coord gridSize; // Tamanho do Grid
-    HeightMap heightMap; // Mapa de alturas
+    public HeightMap heightMap; // Mapa de alturas
     public CentreMap centreMap; // Mapa de centros: y=0
     public Vector3[] border = new Vector3[4]; // Borda do grid: pontos
     public Vector3 center;

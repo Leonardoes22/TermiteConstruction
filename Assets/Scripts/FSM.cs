@@ -97,7 +97,7 @@ public class FSM
 
 
     //Verifica (e dispara) se há alguma transição disponível para o estado atual dado o evento ocorrido
-    void TriggerEvent(Event e) {
+    public void TriggerEvent(Event e) {
 
         foreach (Transition trans in transitionList) {
             if (e.id == trans.evento) {
@@ -108,6 +108,21 @@ public class FSM
             }
         }
 
+    }
+
+    // Returns all feasible events
+    public List<Event> FeasibleEvents(State s) {
+
+        List<Event> feasible = new List<Event>();
+
+
+        foreach (Transition trans in transitionList) {
+            if(s.id == trans.source) {
+                feasible.Add(eventsConteiner[trans.evento]);
+            }
+        }
+
+        return feasible;
     }
 
     //Aplica a função de transição
@@ -121,9 +136,39 @@ public class FSM
     //Event 
     public class Event 
     {
+        static string[] typeMovement = {"u", "d", "l", "r"};
+        static string[] typeMovementIO = { "out", "in" };
+        static string typeGet = "getBrick";
+
 
         public int id; 
         public string label; 
+
+        public string type {
+
+            get {
+                foreach (var mov in typeMovement) {
+                    if(label == mov) {
+                        return "typeMovement";
+                    }
+                }
+                foreach (var movIO in typeMovementIO) {
+                    if (label == movIO) {
+                        return "typeMovementIO";
+                    }
+                }
+
+                if (label == typeGet) {
+                    return "typeGet";
+                }
+                //TODO fix events
+                if ( label[0] == 'a') {
+                    return "typePlace";
+                }
+
+                return "typeOther";
+            }
+        }
 
         public Event(int id, string label) {
             this.id = id;
@@ -133,6 +178,7 @@ public class FSM
         // Sobrescreve método ToString(), não está final
         public override string ToString() {
             return "Event [id= " + this.id + ", label= " + this.label +"]";
+            
         }
 
     }
@@ -172,6 +218,14 @@ public class FSM
 
         public bool initial; //Estado inicial?
         public bool marked; //Estado Marcado?
+
+        public bool InGrid {
+            get {
+                if(x > 0 && y > 0) {
+                    return true;
+                } else { return false; }
+            }
+        }
 
         // Construtor Manual 
         public State(int id, bool carregado, int x, int y, HeightMap heights) {
@@ -225,6 +279,7 @@ public class FSM
         public Coord GetPosition() {
             return new Coord(x,y);
         }
+
 
 
 

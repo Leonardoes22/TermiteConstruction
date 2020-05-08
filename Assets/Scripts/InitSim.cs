@@ -9,14 +9,23 @@ public class InitSim : MonoBehaviour
 {
 
     public GameObject termite;
-    
+    const string defaultSupervisor = "S1_3X3.xml";
+    string info;
+
 
     // Start is called before the first frame update
     void Start()
     {
-        //Get SceneInfo GameObject and its Info
+        //Try Getting SceneInfo GameObject 
         GameObject sceneInfo = GameObject.FindGameObjectWithTag("SceneInfo");
-        string info = sceneInfo.GetComponent<Text>().text;
+
+        if(sceneInfo != null) {
+            info = sceneInfo.GetComponent<Text>().text;
+            print("Loaded: " + info + "supervisor");
+        } else {
+            info = defaultSupervisor;
+            print("Loaded: " + defaultSupervisor + "(Default) supervisor");
+        }
 
         //Initialize TermiteFSM
         termite.GetComponent<TermiteFSMBrain>().Initialize(info);
@@ -30,6 +39,8 @@ public class InitSim : MonoBehaviour
 
         Destroy(sceneInfo);
         Destroy(this);
+
+        
 
     }
 
