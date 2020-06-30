@@ -120,7 +120,6 @@ public class TermiteTS : MonoBehaviour {
     // Atualiza a estrutura
     public void UpdateMap(HeightMap newHeightMap) {
 
-
         for (int i = 1; i < gridSize.x+1; i++) {
             for (int j = 1; j < gridSize.y+1; j++) {
 

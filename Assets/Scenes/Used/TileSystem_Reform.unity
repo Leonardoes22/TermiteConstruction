@@ -288,7 +288,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 3.0092666e-36, y: 1.009742e-28, z: 0, w: 0}
+  m_BoundingSphereOverride: {x: 1.759e-42, y: 1.01e-43, z: 980710.94, w: 0}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -304,7 +304,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
 --- !u!1001 &868441336
 PrefabInstance:
@@ -377,6 +377,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: TermiteBot
+      objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: b4c22c42b9ae17a4bbe1e5a9bd81f636,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b4c22c42b9ae17a4bbe1e5a9bd81f636, type: 3}
@@ -462,7 +467,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 20, y: -90, z: 0}
 --- !u!114 &963194229
 MonoBehaviour:
@@ -670,7 +675,7 @@ Transform:
   - {fileID: 1488974318}
   - {fileID: 1704622484}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1704622483
 PrefabInstance:
@@ -883,6 +888,7 @@ GameObject:
   - component: {fileID: 1931013358}
   - component: {fileID: 1931013357}
   - component: {fileID: 1931013359}
+  - component: {fileID: 1931013361}
   - component: {fileID: 1931013360}
   m_Layer: 0
   m_Name: GameManager
@@ -922,7 +928,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1931013359
 MonoBehaviour:
@@ -938,7 +944,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   stateDisplay: {fileID: 0}
   exitButton: {fileID: 0}
-  termite: {fileID: 2065634299}
+  autoToggle: {fileID: 0}
+  selectedBotBrain: {fileID: 0}
 --- !u!114 &1931013360
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -951,7 +958,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d71fde1a11bbd4343bd5ac69842e341a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  termite: {fileID: 2065634299}
+  info: 
+--- !u!114 &1931013361
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1931013356}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80eca5414d6ef284db319f6e982e116e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2065634299 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -927199367670048503, guid: b4c22c42b9ae17a4bbe1e5a9bd81f636,
@@ -970,8 +989,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9a56ac93ea0e67408179a821e5f4024, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  master: {fileID: 1931013356}
-  controllerInterface: {fileID: 0}
+  manager: {fileID: 1931013356}
+  centralController: {fileID: 0}
+  myTile: {fileID: 0}
+  grabber: {fileID: 0}
+  whegsTransform: []
+  id: 0
 --- !u!64 &2065634304
 MeshCollider:
   m_ObjectHideFlags: 0

@@ -120,22 +120,14 @@ public class InterfaceMenu : MonoBehaviour {
         SceneManager.LoadScene("TileSystem_Reform");
     }
 
-    
-
-
     void ShowDisplay(FSM supervisorio) {
 
         Coord tempCoord = supervisorio.size;
 
         //Init TileSystem
         transform.GetComponent<TermiteTS>().Initialize(tempCoord.x, tempCoord.y, "TermiteTile");
-        HeightMap final = new HeightMap(tempCoord.x, tempCoord.y);
-        foreach (var state in supervisorio.statesConteiner.Values) {
-            if(state.marked == true) {
-                final = state.heightMap;
-            }
-            
-        }
+        HeightMap final = supervisorio.FinalStruct;
+        
         transform.GetComponent<TermiteTS>().UpdateMap(final);
         //Handle Display Camera
         GameObject.Find("RightCamera").transform.position = transform.GetComponent<TermiteTS>().center + new Vector3(0, transform.GetComponent<TermiteTS>().center.magnitude, 0);

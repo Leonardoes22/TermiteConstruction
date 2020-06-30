@@ -5,6 +5,7 @@ using System.IO;
 using System.Xml.Linq;
 using System;
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 public class FSM
 {
@@ -15,13 +16,48 @@ public class FSM
     public State currentState; // Estado atual
     public Coord size;
 
+    public HeightMap FinalStruct {
+
+        get {
+            foreach (var state in statesConteiner.Values) {
+                if (state.marked == true) {
+                    return state.heightMap;
+                }
+            }
+            return null;
+        }
+    }
+
+    public bool isMultiBot {
+
+        get {
+
+            int count = 0;
+            int countAlt = 0;
+
+            foreach (var e in eventsConteiner.Values) {
+
+                if(e.label[0] == 'a') {
+                    if (e.label.EndsWith("_r2")) {
+                        countAlt++;
+                    } else {
+                        count++;
+                    }
+                }
+
+            }
+            return count == countAlt;
+        }
+
+    }
+
     // Start is called before the first frame update
     public FSM(string automaton)
     {
         LoadSupervisor(automaton);
     }
 
-
+    // External Utilities Methods -------------
     // Carrega arquivo xml com supervisor e gera Estados, Eventos e Transições 
     void LoadSupervisor(string file) {
 
@@ -90,46 +126,80 @@ public class FSM
     }
 
 
+
+    // Internal Utilities Methods -------------------
+
     //Função temporária de apoio
     public void CallEvent(int id) {
         TriggerEvent(eventsConteiner[id]);
     }
 
+    //Returns the R2_event of input (if non existent returns self)
+    public Event AltEvent(Event _event) {
+
+        string label = _event.label + "_r2";
+
+        foreach (var e in eventsConteiner.Values) {
+            if(e.label == label) {
+                return e;
+            }
+        }
+        return null;
+    }
 
     //Verifica (e dispara) se há alguma transição disponível para o estado atual dado o evento ocorrido
-    public void TriggerEvent(Event e) {
+    public void TriggerEvent(Event e, bool alt=false) {
+
+        e = alt ? AltEvent(e) : e;
+        
+        if(e != null) {
+            currentState = ImagineEvent(e);
+        } 
+        
+
+    }
+
+    public State ImagineEvent(Event e, State source=null) {
+
+        source = (source == null) ? currentState : source;
 
         foreach (Transition trans in transitionList) {
             if (e.id == trans.evento) {
-                if (trans.source == currentState.id) {
-                    FireTransition(trans);
-                    break;
+                if (trans.source == source.id) {
+                    return statesConteiner[trans.dest];
                 }
             }
         }
 
+        return null;
+
+    }
+    public State ImagineEvent(int eID) {
+        return ImagineEvent(eventsConteiner[eID]);
     }
 
     // Returns all feasible events
-    public List<Event> FeasibleEvents(State s) {
+    public List<Event> FeasibleEvents(State s, bool local=false) {
 
         List<Event> feasible = new List<Event>();
 
 
         foreach (Transition trans in transitionList) {
             if(s.id == trans.source) {
-                feasible.Add(eventsConteiner[trans.evento]);
+
+                if (!eventsConteiner[trans.evento].label.EndsWith("_r2") || !local) {
+                    feasible.Add(eventsConteiner[trans.evento]);
+                }
+
+                
             }
         }
 
         return feasible;
     }
 
-    //Aplica a função de transição
-    void FireTransition(Transition t) {
-        currentState = statesConteiner[t.dest];
-    }
-
+   
+    //  -------------------
 
     //FSM Classes
 
@@ -161,9 +231,18 @@ public class FSM
                 if (label == typeGet) {
                     return "typeGet";
                 }
-                //TODO fix events
+
                 if ( label[0] == 'a') {
-                    return "typePlace";
+                    if (label.EndsWith("_r2")) {
+
+                        return "typePlaceR2";
+
+                    } else {
+                        
+                        return "typePlace";
+
+                    }
+
                 }
 
                 return "typeOther";

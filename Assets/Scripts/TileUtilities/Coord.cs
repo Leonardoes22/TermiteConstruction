@@ -20,6 +20,30 @@ public struct Coord {
         }
     }
 
+    public static Coord up {
+        get {
+            return new Coord(0, 1);
+        }
+    }
+
+    public static Coord down {
+        get {
+            return new Coord(0, -1);
+        }
+    }
+
+    public static Coord left {
+        get {
+            return new Coord(-1, 0);
+        }
+    }
+
+    public static Coord right {
+        get {
+            return new Coord(1, 0);
+        }
+    }
+
 
 
     // Operations
@@ -29,6 +53,10 @@ public struct Coord {
 
     public static bool operator !=(Coord a, Coord b) {
         return a.x != b.x || a.y != b.y;
+    }
+
+    public static Coord operator +(Coord a, Coord b) {
+        return new Coord(a.x + b.x, a.y + b.y);
     }
 
     public override bool Equals(object obj) {
