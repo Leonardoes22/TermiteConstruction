@@ -55,7 +55,7 @@ public class TermiteFSMBrain : MonoBehaviour {
     void Update() {
 
         isAlone = centralController.botList.Count == 1;
-
+        
         // Error handling
         if (supervisorio == null) {
             print("Error: supervisor not loaded yet");
@@ -86,13 +86,11 @@ public class TermiteFSMBrain : MonoBehaviour {
                 foreach (var item in decisionHandler.myPlan) {
                     //print(item);
                 }
-            }
-
+            } 
+            
             if (!transitionHandler.IsTransitioning && !animationHandler.IsAnimating) {
 
-
-                if(supervisorio.FeasibleEvents(supervisorio.currentState, true).Contains(decisionHandler.myPlan[0])) {
-
+                if (supervisorio.FeasibleEvents(supervisorio.currentState, true).Contains(decisionHandler.myPlan[0])) {
                     if (!supervisorio.currentState.marked) {
                         CallIntent(decisionHandler.myPlan[0]);
                         decisionHandler.myPlan.RemoveAt(0);
@@ -104,7 +102,6 @@ public class TermiteFSMBrain : MonoBehaviour {
                     decisionHandler.PlanAction(10, 5);
                 }
 
-                
             }
             
         }
@@ -170,7 +167,7 @@ public class TermiteFSMBrain : MonoBehaviour {
     // State Logic Functions
 
     void CallIntent(FSM.Event _event) {
-        print(Time.time + "- From: " + position + " Called Intent: (" + _event + "), alone?: " + isAlone);
+        //print(Time.time +"- ID:" + id +"- From: " + position + " Called Intent: (" + _event + "), alone?: " + isAlone);
         //FSM.Event _event = supervisorio.eventsConteiner[eventID];
         Coord dest = position;
 
@@ -247,8 +244,6 @@ public class TermiteFSMBrain : MonoBehaviour {
 
         public void PlanAction(int steps=5, int tries=5) {
 
-            
-
             List<FSM.Event> eventPlan = new List<FSM.Event>();
             int maxScore = -1;
 
@@ -262,12 +257,19 @@ public class TermiteFSMBrain : MonoBehaviour {
                     //print(i + "" + j + " Started--- "+ imaginaryState);
                     List<FSM.Event> feasible = brain.supervisorio.FeasibleEvents(imaginaryState, true);
 
-                    FSM.Event tryEvent = feasible[UnityEngine.Random.Range(0, feasible.Count)];
-                    //print(i + "" + j + " Did--- " + tryEvent);
-                    tryPlan.Add(tryEvent);
+                    if(feasible.Count > 0) {
+                        FSM.Event tryEvent = feasible[UnityEngine.Random.Range(0, feasible.Count)];
+                        //print(i + "" + j + " Did--- " + tryEvent);
 
-                    imaginaryState = brain.supervisorio.ImagineEvent(tryEvent, imaginaryState);
-                    //print(i + "" + j + " Ended--- " + imaginaryState);
+                        tryPlan.Add(tryEvent);
+
+                        imaginaryState = brain.supervisorio.ImagineEvent(tryEvent, imaginaryState);
+                        //print(i + "" + j + " Ended--- " + imaginaryState);
+                    }
+
+
+
+
 
 
                 }

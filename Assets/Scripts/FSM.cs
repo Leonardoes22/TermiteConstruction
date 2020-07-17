@@ -320,7 +320,7 @@ public class FSM
 
         // Construtor XML
         public State(int id, string name, Coord size) {
-
+            
             string[] stateInfo = name.Split('.');
 
             this.id = id;
@@ -333,7 +333,7 @@ public class FSM
 
             for (int i = 1; i < size.x + 1; i++) {
                 for (int j = 1; j < size.y + 1; j++) {
-                    int index = 3 + (size.x * (i-1) + j);
+                    int index = 3 + (size.y * (i-1) + j);
                     heightMap[i, j] = int.Parse(stateInfo[index]);
                 }
             }
