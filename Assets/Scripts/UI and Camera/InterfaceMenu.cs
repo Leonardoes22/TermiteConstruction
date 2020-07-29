@@ -131,17 +131,17 @@ public class InterfaceMenu : MonoBehaviour {
         transform.GetComponent<TermiteTS>().UpdateMap(final);
         //Handle Display Camera
         GameObject.Find("RightCamera").transform.position = transform.GetComponent<TermiteTS>().center + new Vector3(0, transform.GetComponent<TermiteTS>().center.magnitude, 0);
-        GameObject.Find("RightCamera").GetComponent<MouseCamRotation>().centerObject = transform.GetComponent<TermiteTS>().floor;
+        GameObject.Find("RightCamera").GetComponent<MouseCamRotation>().SetRotationCenter(transform.GetComponent<TermiteTS>().floor.transform.position);
 
-        GameObject.Find("RightCamera").GetComponent<MouseCamRotation>().active = true;
+        GameObject.Find("RightCamera").GetComponent<MouseCamRotation>().SetActive(true);
 
     }
 
     void DestroyDisplay() {
 
         Destroy(GameObject.Find("Floor"));
-        GameObject.Find("RightCamera").GetComponent<MouseCamRotation>().active = false;
-        GameObject.Find("RightCamera").GetComponent<MouseCamRotation>().centerObject = GameObject.Find("RightCamera");
+        GameObject.Find("RightCamera").GetComponent<MouseCamRotation>().SetActive(false);
+        GameObject.Find("RightCamera").GetComponent<MouseCamRotation>().SetRotationCenter(GameObject.Find("RightCamera").transform.position);
         foreach (var tile in GameObject.FindGameObjectsWithTag("Tile")) {
             Destroy(tile);
         }

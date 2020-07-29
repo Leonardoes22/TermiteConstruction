@@ -1,55 +1,75 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Animations;
-using UnityEngine.UIElements;
+﻿using UnityEngine;
+
 
 public class MouseCamRotation : MonoBehaviour
 {
-    public GameObject centerObject;
-    public bool active = false;
+    //Vars
+    private Vector3 rotationCenter;
+    private bool active = false;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-    }
+    //Parameters
+    private float minDistance = 50f;
+    private float scrollSpeed = 250f;
+    private float rotationSpeed = 5f;
+    private float knockbackSpeed = 0.5f;
+    private float angleTopLimit = 10f;
+    private float angleBottomLimit = 90f;
 
     // Update is called once per frame
     void Update()
     {
         if (active) { 
+
+            //Handle Rotation
             if (Input.GetMouseButton(0)) {
-
+                
                 //Turn Sideways
-                Quaternion camTurnAngle = Quaternion.AngleAxis(Input.GetAxis("Mouse X") * 5.0f, Vector3.up);
-                transform.position = centerObject.transform.position + camTurnAngle * (transform.position - centerObject.transform.position);
-
+                Quaternion camTurnAngle = Quaternion.AngleAxis(Input.GetAxis("Mouse X") * rotationSpeed, Vector3.up);
+                transform.position = rotationCenter + camTurnAngle * (transform.position - rotationCenter);
+                
                 // Calculate Up-Down Axis
-                Vector3 yAxe = Vector3.ProjectOnPlane(transform.position, Vector3.up);
+                Vector3 yAxe = Vector3.ProjectOnPlane(transform.position - rotationCenter, Vector3.up);
                 yAxe = Quaternion.AngleAxis(90, Vector3.up) * yAxe;
+                yAxe = yAxe == Vector3.zero ? Vector3.left : yAxe; //Make sure yAxe is always non zero to avoid camera locking
 
-                //Rotate Up-Down if in limit
-                camTurnAngle = Quaternion.AngleAxis(Input.GetAxis("Mouse Y") * 5.0f, yAxe);
-                Vector3 newPos = centerObject.transform.position + camTurnAngle * (transform.position - centerObject.transform.position);
+                //Rotate Up-Down 
+                camTurnAngle = Quaternion.AngleAxis(Input.GetAxis("Mouse Y") * rotationSpeed, yAxe);
+                Vector3 newPos = rotationCenter + camTurnAngle * (transform.position - rotationCenter);
 
-                if (Vector3.Project(newPos, Vector3.up).magnitude < transform.position.magnitude * 0.9) {
+                //Limit Up-Down movement to avoid graphical glitch
+                float angleY = Vector3.Angle(Vector3.up, transform.position - rotationCenter);
+                if ((angleY < angleTopLimit || angleY > angleBottomLimit) && Mathf.Abs(newPos.y) > Mathf.Abs(transform.position.y) ) {
                    
+                   newPos = transform.position;
+                    
                 }
+                
+                //Update position
                 transform.position = newPos;
-
-
+                
             }
 
-            if (Input.mouseScrollDelta.magnitude > 0 ) {
 
-                transform.position = (1 - Input.GetAxis("Mouse ScrollWheel")) * transform.position;
-            
+            // Scroll in and out and define minimum distance
+            if (Vector3.Distance(rotationCenter, transform.position) > minDistance || Input.GetAxis("Mouse ScrollWheel") < 0) {
+                transform.Translate(new Vector3(0, 0, Input.GetAxis("Mouse ScrollWheel") * scrollSpeed));
+            } else {
+                transform.Translate(new Vector3(0, 0, -knockbackSpeed));
             }
 
-            //Face center 
-            transform.LookAt(centerObject.transform);
+            //Always face center 
+            transform.LookAt(rotationCenter);
 
         }
+    }
+
+    public void SetRotationCenter(Vector3 rotCenter) {
+        rotationCenter = rotCenter;
+    }
+
+
+    public void SetActive(bool value) {
+        active = value;
     }
 
 }

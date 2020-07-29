@@ -18,7 +18,6 @@ public class CameraController : MonoBehaviour
         if (Input.GetMouseButton(0)) {
             print(lastMouse);
             lastMouse = new Vector3(-lastMouse.y * camSens, lastMouse.x * camSens, 0);
-            //print(lastMouse);
             lastMouse = new Vector3(transform.eulerAngles.x + lastMouse.x, transform.eulerAngles.y + lastMouse.y, 0);
             transform.eulerAngles = lastMouse;
         }
