@@ -170,9 +170,9 @@ public class TermiteFSMBrain : MonoBehaviour {
         //print(Time.time +"- ID:" + id +"- From: " + position + " Called Intent: (" + _event + "), alone?: " + isAlone);
         //FSM.Event _event = supervisorio.eventsConteiner[eventID];
         Coord dest = position;
-
+        
         switch (_event.type) {
-
+            
             case "typeMovement":
                 switch (_event.label) {
                     case "u":
@@ -192,6 +192,8 @@ public class TermiteFSMBrain : MonoBehaviour {
                     dest = Coord.origin;
                 } else if (_event.label == "in") {
                     dest = new Coord(1, 1);
+                } else {
+                    dest = new Coord((int)Char.GetNumericValue(_event.label[2]), (int)Char.GetNumericValue(_event.label[3]));
                 }
 
                 break;
@@ -351,7 +353,7 @@ public class TermiteFSMBrain : MonoBehaviour {
 
         public void StartTransition(int eventID, Coord dest) {
 
-            print(Time.time + "- Started Transition: " + dest + " e " + brain.position);
+            //print(Time.time + "- Started Transition: " + dest + " e " + brain.position);
 
             _event = brain.supervisorio.eventsConteiner[eventID];
 
@@ -545,12 +547,9 @@ public class TermiteFSMBrain : MonoBehaviour {
                         coreTransform.position = tileSystem.centreMap[new Coord(1,1)];
                         coreTransform.eulerAngles = compass[3];
                     }
-
-                    
                     break;
 
-                case "other":
-                    break;
+              
             }
 
         }
@@ -558,10 +557,10 @@ public class TermiteFSMBrain : MonoBehaviour {
         public void Animate() {
 
             if(IsAnimating) {
-
+                
                 //Animation Logic
                 if (!IsAnimatingStep) {
-
+                   
                     //Animate next step in queue
                     if (animationBuffer.Count > 0) {
 
@@ -571,6 +570,7 @@ public class TermiteFSMBrain : MonoBehaviour {
                     } else {
                         IsAnimating = false;
                         brain.UpdateState();
+                        
                     }
 
                 }

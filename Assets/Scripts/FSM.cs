@@ -228,6 +228,10 @@ public class FSM
                     }
                 }
 
+                if(label.Length >= 2 && label.Substring(0,2) == "in") {
+                    return "typeMovementIO";
+                }
+
                 if (label == typeGet) {
                     return "typeGet";
                 }
