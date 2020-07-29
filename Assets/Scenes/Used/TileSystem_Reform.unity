@@ -481,10 +481,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce1ba47c4decc8d43a3b8c024e61cd4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainSpeed: 30
-  scrollSpeed: 200
+  mainSpeed: 300
+  scrollSpeed: 500
   camSens: 0.25
-  text: {fileID: 0}
 --- !u!1 &1488974317
 GameObject:
   m_ObjectHideFlags: 0
@@ -945,6 +944,10 @@ MonoBehaviour:
   stateDisplay: {fileID: 0}
   exitButton: {fileID: 0}
   autoToggle: {fileID: 0}
+  disbandButton: {fileID: 0}
+  addBotButton: {fileID: 0}
+  fastAnimToggle: {fileID: 0}
+  endText: {fileID: 0}
   selectedBotBrain: {fileID: 0}
 --- !u!114 &1931013360
 MonoBehaviour:
@@ -959,6 +962,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   info: 
+  isMultibot: 0
+  isFastAnim: 0
 --- !u!114 &1931013361
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -971,6 +976,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80eca5414d6ef284db319f6e982e116e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  botList: []
 --- !u!1 &2065634299 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -927199367670048503, guid: b4c22c42b9ae17a4bbe1e5a9bd81f636,
@@ -995,6 +1001,7 @@ MonoBehaviour:
   grabber: {fileID: 0}
   whegsTransform: []
   id: 0
+  isAuto: 0
 --- !u!64 &2065634304
 MeshCollider:
   m_ObjectHideFlags: 0
