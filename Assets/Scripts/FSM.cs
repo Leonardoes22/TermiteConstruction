@@ -199,6 +199,12 @@ public class FSM
         return feasible;
     }
 
+    public void RunEvents(List<Event> eventList) {
+        for (int i = 0; i < eventList.Count; i++) {
+            TriggerEvent(eventList[i], true);
+        }
+    }
+
    
     //  -------------------
 
