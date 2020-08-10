@@ -32,7 +32,7 @@ public class InterfaceFSM : MonoBehaviour {
     
     public void Initialize() {
 
-       
+        selectedBotBrain = gameObject.GetComponent<CentralController>().botList[0].GetComponent<TermiteFSMBrain>();
 
 
         //Instantiate canvas

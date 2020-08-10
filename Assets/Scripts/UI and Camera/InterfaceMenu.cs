@@ -69,7 +69,7 @@ public class InterfaceMenu : MonoBehaviour {
             if (Path.GetExtension(file) == ".xml") {
                 supPaths.Add(file);
             }
-
+            
         }
 
         int btnCount = 1;

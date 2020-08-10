@@ -16,7 +16,7 @@ public class CameraController : MonoBehaviour
         //Angle control with mouse 
         lastMouse = Input.mousePosition - lastMouse;
         if (Input.GetMouseButton(0)) {
-            print(lastMouse);
+
             lastMouse = new Vector3(-lastMouse.y * camSens, lastMouse.x * camSens, 0);
             lastMouse = new Vector3(transform.eulerAngles.x + lastMouse.x, transform.eulerAngles.y + lastMouse.y, 0);
             transform.eulerAngles = lastMouse;

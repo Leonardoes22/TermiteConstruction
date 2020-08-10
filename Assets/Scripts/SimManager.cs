@@ -5,27 +5,45 @@ using UnityEngine.UI;
 
 
 
-public class SimManager : MonoBehaviour
-{
+public class SimManager : MonoBehaviour {
 
-    CentralController centralController;
+    //Gameobject References
+    public CentralController centralController;
+    public TermiteTS tileSystem;
+    public InterfaceFSM interfaceFSM;
+
+    //Constants
     const string defaultSupervisor = "S2_3X3.xml";
-    public string info;
-    public bool isMultibot;
+
+    //Simulation Parameters
     public bool isFastAnim;
 
+    //Scenario Parameters
+    public bool isMultibot;
+    Coord size;
 
-    // Start is called before the first frame update
-    void Start()
-    {
+
+    void Start() {
+
+        LoadScenario();
+
+        //Initialize TermiteTS
+        tileSystem.Initialize(size.x, size.y, "TermiteTile");
+
         //Reference CentralController
-        centralController = gameObject.GetComponent<CentralController>();
         centralController.Initialize();
 
-        //Try Getting SceneInfo GameObject 
+        //Initialize InterfaceFSM
+        interfaceFSM.Initialize();
+    }
+
+    void LoadScenario() {
+
+        //Load Selected Scenario or the Default one 
         GameObject sceneInfo = GameObject.FindGameObjectWithTag("SceneInfo");
 
-        if(sceneInfo != null) {
+        string info;
+        if (sceneInfo != null) {
             info = sceneInfo.GetComponent<Text>().text;
             print("Loaded: " + info + "supervisor");
         } else {
@@ -34,31 +52,15 @@ public class SimManager : MonoBehaviour
         }
 
 
+        // Setup Scenario Parameters
+        FSM fsm = new FSM(info);
+        isMultibot = fsm.isMultiBot;
+        size = fsm.size;
 
-        //Initialize bot
-        TermiteFSMBrain firstBotBrain = centralController.SpawnBot();
-        centralController.heightMap = firstBotBrain.supervisorio.currentState.heightMap;
-
-        isMultibot = firstBotBrain.supervisorio.isMultiBot;
-
-
-        //Initialize TermiteTS
-        Coord temp_size = firstBotBrain.supervisorio.size;
-        transform.GetComponent<TermiteTS>().Initialize(temp_size.x, temp_size.y, "TermiteTile");
-
-        
-
-        //Initialize InterfaceFSM
-        transform.GetComponent<InterfaceFSM>().selectedBotBrain = firstBotBrain;
-        firstBotBrain.hmiHandler.selected = true;
-        transform.GetComponent<InterfaceFSM>().Initialize();
 
         Destroy(sceneInfo);
-        
-
 
     }
-
 
     public void FastAnimToggleListener(bool isFastAnimState) {
 
@@ -66,10 +68,4 @@ public class SimManager : MonoBehaviour
 
     }
 
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

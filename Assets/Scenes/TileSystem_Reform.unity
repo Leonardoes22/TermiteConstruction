@@ -288,7 +288,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 1.759e-42, y: 1.01e-43, z: 980710.94, w: 0}
+  m_BoundingSphereOverride: {x: 7.05e-43, y: -8.18972, z: 7.06e-43, w: -3.692768}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -961,6 +961,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d71fde1a11bbd4343bd5ac69842e341a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  centralController: {fileID: 1931013361}
+  tileSystem: {fileID: 1931013357}
+  interfaceFSM: {fileID: 1931013359}
   info: 
   isMultibot: 0
   isFastAnim: 0

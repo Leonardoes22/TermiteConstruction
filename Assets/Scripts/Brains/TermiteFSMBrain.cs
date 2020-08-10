@@ -73,12 +73,11 @@ public class TermiteFSMBrain : MonoBehaviour {
 
         // Multibot handling
         hmiHandler.CheckSelection();
-
-        //Check if structure finished
+        
         if (supervisorio.currentState.marked) {
             hmiHandler.End();
         }
-
+        
         if (isAuto) {
             
             if(decisionHandler.myPlan.Count == 0) {

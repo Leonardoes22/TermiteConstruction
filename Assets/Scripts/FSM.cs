@@ -63,6 +63,7 @@ public class FSM
 
         // Pega o caminho do arquivo
         var supervisorsfolder = Directory.GetCurrentDirectory() + "\\Assets\\Resources\\Supervisors\\";
+        
         var supPath = supervisorsfolder + file;
 
         

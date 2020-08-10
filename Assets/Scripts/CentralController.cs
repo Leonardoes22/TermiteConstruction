@@ -29,9 +29,11 @@ public class CentralController : MonoBehaviour
 
         simManager = gameObject.GetComponent<SimManager>();
         tileSystem = gameObject.GetComponent<TermiteTS>();
-
+        heightMap = tileSystem.heightMap;
+        SpawnBot();
     }
 
+    
 
     public TermiteFSMBrain SpawnBot() {
 
