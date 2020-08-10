@@ -31,23 +31,21 @@ public class CentralController : MonoBehaviour
         
         //Instantiate the bot
         GameObject newBot = (GameObject)Instantiate(Resources.Load("TermiteBotWithTile"));
-
-        //Set bot id
-        newBot.GetComponent<TermiteFSMBrain>().id = uidCount++;
-
-        //Initialize Termite Brain
-        newBot.GetComponent<TermiteFSMBrain>().manager = this.gameObject;
-        newBot.GetComponent<TermiteFSMBrain>().Initialize(simManager.supervisorName);
+        TermiteFSMBrain newBotBrain = newBot.GetComponent<TermiteFSMBrain>();
 
         
+        //Set bot id
+        newBotBrain.id = uidCount++;
+
+        //Initialize Termite Brain
+        newBotBrain.manager = this.gameObject;
+        newBotBrain.Initialize(simManager.supervisorName, externalEvents);
+
+
         //Add to botList
         botList.Add(newBot);
 
-        
-        //Update already made actions
-        newBot.GetComponent<TermiteFSMBrain>().supervisorio.RunEvents(externalEvents);
-
-        return newBot.GetComponent<TermiteFSMBrain>();
+        return newBotBrain;
     }
 
     public void DisbandBot(GameObject selBot) {

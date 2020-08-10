@@ -141,7 +141,7 @@ public class TermiteFSMBrain : MonoBehaviour {
         decisionHandler = new DecisionHandler(this);
     }
 
-    public void Initialize(string automaton) {
+    public void Initialize(string automaton, List<FSM.Event> previousEvents) {
 
         // Set central controller
         centralController = manager.GetComponent<CentralController>();
@@ -160,6 +160,8 @@ public class TermiteFSMBrain : MonoBehaviour {
 
         // Set initial position
         animationHandler.FixPosition();
+
+        supervisorio.RunEvents(previousEvents);
 
     }
 
