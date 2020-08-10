@@ -8,27 +8,18 @@ using UnityEngine.Tilemaps;
 public class CentralController : MonoBehaviour
 {
 
+    //Gameobject References
+    public SimManager simManager;
+    public TermiteTS tileSystem;
+
+    //CentralController Vars
     public List<GameObject> botList = new List<GameObject>();
     public List<FSM.Event> externalEvents = new List<FSM.Event>();
-    SimManager simManager;
-    TermiteTS tileSystem;
-
     public HeightMap heightMap;
-    int uidCount = 0;
-    
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-
-
-    }
+    int uidCount = 0;  
 
     public void Initialize() {
 
-        simManager = gameObject.GetComponent<SimManager>();
-        tileSystem = gameObject.GetComponent<TermiteTS>();
         heightMap = tileSystem.heightMap;
         SpawnBot();
     }
@@ -37,29 +28,15 @@ public class CentralController : MonoBehaviour
 
     public TermiteFSMBrain SpawnBot() {
 
+        
         //Instantiate the bot
-        GameObject newBot = (GameObject) Instantiate(Resources.Load("TermiteBot"));
-
-        //Instantiate tile 
-        GameObject newBotTile = (GameObject)Instantiate(Resources.Load("TermiteTile"));
-        newBotTile.transform.SetParent(newBot.transform.GetChild(1).GetChild(0)); //Set bot as parent
-        newBotTile.transform.localPosition = new Vector3(0.1633892f, -0.0009015298f, -0.01356555f); // Fix localposition
-        newBotTile.GetComponent<MeshRenderer>().enabled = false;
-
-        //Add MeshCollider
-        newBot.AddComponent<MeshCollider>();
-
-        //Add correct core material
-        newBot.GetComponent<MeshRenderer>().material = (Material) Resources.Load("CoreInteractive");
-
-        //Instantiate brain
-        newBot.AddComponent<TermiteFSMBrain>();
+        GameObject newBot = (GameObject)Instantiate(Resources.Load("TermiteBotWithTile"));
 
         //Set bot id
         newBot.GetComponent<TermiteFSMBrain>().id = uidCount++;
 
         newBot.GetComponent<TermiteFSMBrain>().manager = this.gameObject;
-        newBot.GetComponent<TermiteFSMBrain>().Initialize(simManager.info);
+        newBot.GetComponent<TermiteFSMBrain>().Initialize(simManager.supervisorName);
 
         
 

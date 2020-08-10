@@ -856,7 +856,7 @@ PrefabInstance:
     - target: {fileID: -1504981713932161579, guid: 8fd049b0d13eea54192d737ad26daf53,
         type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -927199367670048503, guid: 8fd049b0d13eea54192d737ad26daf53,
         type: 3}
@@ -964,9 +964,9 @@ MonoBehaviour:
   centralController: {fileID: 1931013361}
   tileSystem: {fileID: 1931013357}
   interfaceFSM: {fileID: 1931013359}
-  info: 
-  isMultibot: 0
   isFastAnim: 0
+  supervisorName: 
+  isMultibot: 0
 --- !u!114 &1931013361
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -979,6 +979,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80eca5414d6ef284db319f6e982e116e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  simManager: {fileID: 1931013360}
+  tileSystem: {fileID: 1931013357}
   botList: []
 --- !u!1 &2065634299 stripped
 GameObject:

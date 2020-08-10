@@ -19,9 +19,9 @@ public class SimManager : MonoBehaviour {
     public bool isFastAnim;
 
     //Scenario Parameters
+    public string supervisorName;
     public bool isMultibot;
     Coord size;
-
 
     void Start() {
 
@@ -37,23 +37,23 @@ public class SimManager : MonoBehaviour {
         interfaceFSM.Initialize();
     }
 
+    //Load the Simulation for one supervisor
     void LoadScenario() {
 
         //Load Selected Scenario or the Default one 
         GameObject sceneInfo = GameObject.FindGameObjectWithTag("SceneInfo");
 
-        string info;
         if (sceneInfo != null) {
-            info = sceneInfo.GetComponent<Text>().text;
-            print("Loaded: " + info + "supervisor");
+            supervisorName = sceneInfo.GetComponent<Text>().text;
+            print("Loaded: " + supervisorName + "supervisor");
         } else {
-            info = defaultSupervisor;
+            supervisorName = defaultSupervisor;
             print("Loaded: " + defaultSupervisor + "(Default) supervisor");
         }
 
 
         // Setup Scenario Parameters
-        FSM fsm = new FSM(info);
+        FSM fsm = new FSM(supervisorName);
         isMultibot = fsm.isMultiBot;
         size = fsm.size;
 
