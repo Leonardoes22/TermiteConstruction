@@ -44,13 +44,7 @@ public class TermiteFSMBrain : MonoBehaviour {
     //bool isOn = false;
 
 
-    List<FSM.Event> teste;
 
-    void Start() {
-
-        
-
-    }
 
     void Update() {
 
@@ -769,7 +763,6 @@ public class TermiteFSMBrain : MonoBehaviour {
         public void UpdateStateDisplay() {
 
             if(selected || brain.isAlone) {
-                hmi.stateDisplay.GetComponent<Text>().text = brain.supervisorio.currentState.ToString();
                 hmi.autoToggle.GetComponent<UnityEngine.UI.Toggle>().isOn = brain.isAuto;
 
             }
