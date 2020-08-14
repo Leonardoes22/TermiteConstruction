@@ -20,14 +20,9 @@ public class TermiteFSMBrain : MonoBehaviour {
     public GameObject manager;
     public CentralController centralController;
 
-    // Bot Children (Must be loaded)
-    public GameObject myTile;
-    public GameObject grabber;
-    public Transform[] whegsTransform;
-
     // Handlers
     public TransitionHandler transitionHandler;
-    AnimationHandler animationHandler;
+    public TermiteAnimationComponent animationHandler;
     public HMIHandler hmiHandler;
     DecisionHandler decisionHandler;
 
@@ -37,7 +32,7 @@ public class TermiteFSMBrain : MonoBehaviour {
     // Working On TODO
     public int id;
     bool hasTile { get { return supervisorio != null ? supervisorio.currentState.hasTile : false; } }
-    Coord position;
+    public Coord position;
 
     public bool isAuto = false; 
     bool isAlone;
@@ -54,16 +49,7 @@ public class TermiteFSMBrain : MonoBehaviour {
         if (supervisorio == null) {
             print("Error: supervisor not loaded yet");
         }
-        if (myTile == null) {
-            print("Error: missing internal tile reference");
-        }
-        if (myTile == null) {
-            print("Error: missing grabber reference");
-        }
 
-
-        // Animation handling
-        animationHandler.Animate();
 
         // Multibot handling
         hmiHandler.CheckSelection();
@@ -119,18 +105,12 @@ public class TermiteFSMBrain : MonoBehaviour {
 
     // Initialization Routine Functions
 
-    void InstantiateBotChildren() {
-        grabber = transform.Find("Grabber").gameObject;
-        myTile = grabber.transform.GetChild(0).GetChild(0).gameObject;
-        whegsTransform = new Transform[4];
-        for (int i = 0; i < 4; i++) {
-            whegsTransform[i] = transform.Find("Wheg" + i);
-        }
-    }
-
     void InstantiateHandlers() {
         transitionHandler = new TransitionHandler(this);
-        animationHandler = new AnimationHandler(this);
+        
+        animationHandler.Initialize(manager);
+
+
         hmiHandler = new HMIHandler(this, manager.GetComponent<InterfaceFSM>());
         decisionHandler = new DecisionHandler(this);
     }
@@ -145,9 +125,6 @@ public class TermiteFSMBrain : MonoBehaviour {
 
         // Get initial gridosition - normally (0,0)
         position = supervisorio.currentState.GetPosition();
-
-        // Instantiate bot children
-        InstantiateBotChildren();
 
         // Instantiate Handlers
         InstantiateHandlers();
@@ -209,7 +186,7 @@ public class TermiteFSMBrain : MonoBehaviour {
         }
 
     }
-    void UpdateState() {
+    public void UpdateState() {
 
         transitionHandler.EndTransition();
         hmiHandler.UpdateDisplay();
@@ -383,348 +360,7 @@ public class TermiteFSMBrain : MonoBehaviour {
 
     }
     
-    class AnimationHandler {
-
-        // External References
-        TermiteFSMBrain brain;
-        TermiteTS tileSystem;
-
-        //Animation Variables
-        Vector3 initialPos;
-        int nextDirection;
-        public int currentDirection = 3;
-
-        // Animation queue
-        public List<Action> animationBuffer = new List<Action>();
-
-        // Animation states
-        public bool isGrabbing = false;
-        public bool isPlacing = false;
-        bool isMovingFoward = false;
-        int isTurning = 0;
-        bool fastMode {
-
-            get {
-                return brain.centralController.gameObject.GetComponent<SimManager>().isFastAnim;
-            }
-        }
-
-        // Animation parameters
-        const float fowardSpeed = 22f * 2;
-        const float grabSpeed = 100f;
-        const float whegSpeed = 300f;
-        const float turnSpeed = 120f * 2;
-        Vector3[] compass = { new Vector3(0, 270, 0), new Vector3(0, 180, 0), new Vector3(0, 90, 0), new Vector3(0, 0, 0) };
-
-        const float baseHeight = 5f;
-        const float tileHeight = 2.25f;
-        Vector3 outsidePos = new Vector3(-27.5f * 1.5f, baseHeight, -27.5f * 1.5f);
-
-        // Animation transforms
-        Transform coreTransform;
-        Transform myTileTransform;
-        Transform grabberTransform;
-        Transform[] whegsTransform;
-
-        // Properties
-        public bool IsAnimating { get; private set; } = false;
-
-        bool IsAnimatingStep {
-            get {
-                if(isGrabbing || isPlacing || isMovingFoward || isTurning != 0) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        }
-
-        // Constructor
-        public AnimationHandler(TermiteFSMBrain brain) {
-
-            this.brain = brain;
-            this.coreTransform = brain.transform;
-            this.myTileTransform = brain.myTile.transform;
-            this.grabberTransform = brain.grabber.transform;
-            this.whegsTransform = brain.whegsTransform;
-
-            tileSystem = brain.manager.GetComponent<TermiteTS>();
- 
-        }
-
-
-        // Methods
-
-
-        public void FixPosition() {
-
-            if (brain.supervisorio.currentState.InGrid){
-
-                Coord gridPos = brain.supervisorio.currentState.GetPosition();
-
-                float heightModifier = tileSystem.heightMap[gridPos] * tileHeight;
-
-                coreTransform.position = tileSystem.centreMap[gridPos] + new Vector3(0,baseHeight+heightModifier,0); // Temp Correction
-            } else {
-                coreTransform.position = outsidePos + new Vector3(0, 0, brain.id * 27.5f);
-                currentDirection = 3;
-            }
-
-        }
-        
-        public void StartAnimation(int eventID) {
-
-            //print(Time.time + "- Started Animation");
-
-            IsAnimating = true;
-
-            FSM.Event _event = brain.supervisorio.eventsConteiner[eventID];
-            string eventType = _event.type;
-
-            switch (eventType) {
-
-                case "typeGet":
-                    animationBuffer.Add(GrabTile);
-                    break;
-
-                case "typePlace":
-
-                    int x = int.Parse(_event.label[1].ToString());
-                    int y = int.Parse(_event.label[2].ToString());
-                    /*
-                    print(_event.label);
-                    print("My: " + brain.position);
-                    print("Target: " + x + "." + y);
-                    */
-                    if(brain.position.y < y) {
-                        animationBuffer.Add(() => TurnTo(0));
-                    } else if (brain.position.y > y) {
-                        animationBuffer.Add(() => TurnTo(2));
-                    } else if(brain.position.x < x) {
-                        animationBuffer.Add(() => TurnTo(3));
-                    } else {
-                        animationBuffer.Add(() => TurnTo(1));
-                    }
-                    animationBuffer.Add(PlaceTile);
-
-                    break;
-
-                case "typeMovement":
-
-                    switch (_event.label) {
-
-                        case "u":
-                            animationBuffer.Add(() => TurnTo(1));
-                            break;
-                        
-                        case "d":
-                            animationBuffer.Add(() => TurnTo(3));
-                            break;
-
-                        case "l":
-                            animationBuffer.Add(() => TurnTo(2));
-                            break;
-
-                        case "r":
-                            animationBuffer.Add(() => TurnTo(0));
-                            break;
-
-                    }
-                    animationBuffer.Add(GoFoward);
-                    break;
-
-                case "typeMovementIO":
-
-                    if(_event.label == "out") {
-                        coreTransform.position = outsidePos;
-                        coreTransform.eulerAngles = compass[3];
-                    } else if(_event.label == "in")  {
-                        coreTransform.position = tileSystem.centreMap[new Coord(1,1)];
-                        coreTransform.eulerAngles = compass[3];
-                    }
-                    break;
-
-              
-            }
-
-        }
-        
-        public void Animate() {
-
-            if(IsAnimating) {
-                
-                //Animation Logic
-                if (!IsAnimatingStep) {
-                   
-                    //Animate next step in queue
-                    if (animationBuffer.Count > 0) {
-
-                        animationBuffer[0].Invoke(); //Call animation command
-                        animationBuffer.RemoveAt(0); // Remove animation command from queue
-
-                    } else {
-                        IsAnimating = false;
-                        brain.UpdateState();
-                        
-                    }
-
-                }
-
-                // Perform Animations
-                if (isMovingFoward) {
-                    AnimateFoward();
-                }
-                if (isGrabbing) {
-                    AnimateGrab();
-                }
-                if (isPlacing) {
-                    AnimatePlacing();
-                }
-                if (Math.Abs(isTurning) == 1) {
-                    AnimateTurning();
-                }
-
-
-            }
-
-        }
-
-        // Animation commands
-        public void GrabTile() {
-            
-            myTileTransform.gameObject.GetComponent<MeshRenderer>().enabled = true;
-            isGrabbing = true; 
-        }
-        public void PlaceTile() {
-            
-            isPlacing = true;
-
-            //print("Placing");
-        }
-        public void TurnRight() {
-            
-            nextDirection = currentDirection - 1 >= 0 ? (currentDirection - 1) % 4 : 3;
-            isTurning = 1;
-
-            //print("Turning right");
-
-        }
-        public void TurnLeft() {
-            
-            nextDirection = (currentDirection + 1) % 4;
-            isTurning = -1;
-            //print("Turning left");
-        }
-        public void TurnTo(int destiny) {
-
-            if (destiny == currentDirection) {
-                //print("Already there");
-            } else {
-                for (int i = 0; i < 2; i++) {
-                    nextDirection = currentDirection - 1 >= 0 ? currentDirection - 1 : 3;
-                    if (nextDirection == destiny) {
-                        isTurning = 1;
-                        break;
-                    }
-                    nextDirection = destiny;
-                    isTurning = -1;
-                }
-            }
-
-            //brain.manager.GetComponent<InterfaceFSM>().debug2.GetComponent<Text>().text = Time.time + "-- turning to " + destiny ;
-            
-        }
-
-        public void GoFoward() {
-
-            Coord tempCoord = brain.supervisorio.currentState.GetPosition();
-            if(tempCoord != Coord.origin) {
-                initialPos = tileSystem.centreMap[brain.supervisorio.currentState.GetPosition()];
-
-                isMovingFoward = true;
-            }
-            
-        }
-
-        // Animate grabbing tile
-        void AnimateGrab() {
-
-            if (!fastMode) {
-                grabberTransform.Rotate(new Vector3(0, 0, grabSpeed * Time.deltaTime));
-            } 
-
-            if (grabberTransform.eulerAngles.z > 140
-                || fastMode) {
-                grabberTransform.localEulerAngles = new Vector3(0,0,140);
-                isGrabbing = false;
-            }
-
-        }
-        void AnimatePlacing() {
-            if (!fastMode) {
-                grabberTransform.Rotate(new Vector3(0, 0, -grabSpeed * Time.deltaTime));
-            } 
-
-            if (grabberTransform.eulerAngles.z < 2
-                || fastMode) {
-                grabberTransform.localEulerAngles = new Vector3(0, 0, 0); 
-                isPlacing = false;
-                myTileTransform.gameObject.GetComponent<MeshRenderer>().enabled = false; // TODO
-
-            }
-        }
-        // Animate turning bot
-        void AnimateTurning() {
-
-            //brain.manager.GetComponent<InterfaceFSM>().debug.GetComponent<Text>().text = Time.time + "-- gira gira ";
-
-            if (!fastMode) {
-                
-                for (int i = 0; i < 4; i++) {
-                    whegsTransform[i].Rotate(new Vector3(0, 0, (i < 2 ? -1 : 1) * isTurning * whegSpeed * Time.deltaTime));
-                }
-
-                coreTransform.Rotate(new Vector3(0, isTurning * turnSpeed * Time.deltaTime, 0));
-
-            }
-            
-
-
-            if (Mathf.Abs(Mathf.Abs(coreTransform.eulerAngles.y) - compass[nextDirection].y) < 8
-                || fastMode) {
-
-                currentDirection = nextDirection;
-                coreTransform.eulerAngles = compass[currentDirection];
-                isTurning = 0;
-
-            }
-
-
-        }
-        // Animate foward walk
-        void AnimateFoward() {
-
-            if (!fastMode) {
-                for (int i = 0; i < 4; i++) {
-                    whegsTransform[i].Rotate(new Vector3(0, 0, -whegSpeed * Time.deltaTime));
-                }
-
-                coreTransform.Translate(new Vector3(fowardSpeed * Time.deltaTime, 0, 0));
-            } else {
-                coreTransform.Translate(new Vector3(27.5f, 0, 0));
-            }
-
-            
-
-            if(Vector3.Distance(coreTransform.position,initialPos) > 27.5f) {
-                
-                isMovingFoward = false;
-
-            }
-
-        }
-
-    }
+    
     
     public class HMIHandler {
         
