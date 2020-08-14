@@ -13,7 +13,7 @@ public class TermiteTS : MonoBehaviour {
     public Vector3 center;
 
     public GameObject floor;
-    TileObj tile; // Contém Objeto Tile e tamanho
+    public TileObj tile; // Contém Objeto Tile e tamanho
 
 
     float margin = 100; // Margem do cenário
@@ -81,7 +81,7 @@ public class TermiteTS : MonoBehaviour {
     // Devolve Vector3 do próximo tile
     public Vector3 NextTilePosition(Coord index) {
 
-        float height = tile.Size.y * (heightMap[index]+0.5f);
+        float height = 2.75f + tile.Size.y * (heightMap[index]);
         Vector3 pos = centreMap[index];
         pos.y = height;
 
@@ -144,7 +144,16 @@ public class TermiteTS : MonoBehaviour {
 
 
     //Classes auxiliar
-    class TileObj {
+    public class TileObj {
+
+        /* TermiteTile Info
+         * 
+         * height: 4.5
+         * width: 27.5
+         * walking height = center of mass: 2.75
+         * 
+         */
+
 
         public UnityEngine.Object TileObject { get; }
         public Vector3 Size { get; }
@@ -163,3 +172,4 @@ public class TermiteTS : MonoBehaviour {
     
 
 }
+ 
