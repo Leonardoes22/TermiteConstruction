@@ -64,11 +64,6 @@ public class TermiteAIComponent : MonoBehaviour
                     //print(i + "" + j + " Ended--- " + imaginaryState);
                 }
 
-
-
-
-
-
             }
 
             if (EvaluatePlan(tryPlan, steps) > maxScore) {

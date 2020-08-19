@@ -22,7 +22,7 @@ public class TermiteFSMBrain : MonoBehaviour {
 
     // Handlers
     public TransitionHandler transitionHandler;
-    public HMIHandler hmiHandler;
+    public TermiteInterfaceComponent hmiHandler;
 
     public TermiteAnimationComponent animationHandler;
     public TermiteAIComponent decisionHandler;
@@ -36,7 +36,7 @@ public class TermiteFSMBrain : MonoBehaviour {
     public Coord position;
 
     public bool isAuto = false; 
-    bool isAlone;
+    public bool isAlone;
     //bool isOn = false;
 
     void Update() {
@@ -50,15 +50,11 @@ public class TermiteFSMBrain : MonoBehaviour {
 
 
         // Multibot handling
-        hmiHandler.CheckSelection();
+        //hmiHandler.CheckSelection();
         
         if (supervisorio.currentState.marked) {
             hmiHandler.End();
         }
-        
-        
-
-        
 
     }
 
@@ -67,9 +63,9 @@ public class TermiteFSMBrain : MonoBehaviour {
 
     void InstantiateHandlers() {
         transitionHandler = new TransitionHandler(this);
-        hmiHandler = new HMIHandler(this, manager.GetComponent<InterfaceFSM>());
 
         animationHandler.Initialize(manager);
+        hmiHandler.Initialize(manager);
     }
 
     public void Initialize(string automaton, List<FSM.Event> previousEvents) {
@@ -214,153 +210,5 @@ public class TermiteFSMBrain : MonoBehaviour {
 
     }
     
-    
-    
-    
-
-    //Mouso Collision Functions
-    private void OnMouseEnter() {
-
-        hmiHandler.hovering = true;
-
-    }
-
-    private void OnMouseExit() {
-
-        hmiHandler.hovering = false;
-
-    }
-    public class HMIHandler {
-
-        TermiteFSMBrain brain;
-        InterfaceFSM hmi;
-
-        public bool hovering = false;
-        public bool selected = false;
-
-        bool outlined {
-            get { return (hovering || selected); }
-        }
-
-        public HMIHandler(TermiteFSMBrain brain, InterfaceFSM hmi) {
-
-            this.brain = brain;
-            this.hmi = hmi;
-
-        }
-
-
-        public void End() {
-            hmi.endText.SetActive(true);
-        }
-
-        public void UpdateOutline() {
-
-            if (outlined && !brain.isAlone) {
-                brain.gameObject.GetComponent<MeshRenderer>().material.SetFloat("_FirstOutlineWidth", 0.03f);
-            } else {
-                brain.gameObject.GetComponent<MeshRenderer>().material.SetFloat("_FirstOutlineWidth", 0f);
-            }
-
-        }
-
-        public void UpdateStateDisplay() {
-
-            if (selected || brain.isAlone) {
-                hmi.autoToggle.GetComponent<UnityEngine.UI.Toggle>().isOn = brain.isAuto;
-
-            }
-
-
-
-        }
-
-        public void UpdateStateButtons() {
-
-            if (selected) {
-                if (!brain.isAuto) {
-
-                    hmi.DestroyStateButtons();
-
-                    hmi.CreateStateButtons();
-
-                } else {
-                    HideStateButtons();
-                }
-            }
-
-
-
-        }
-
-        public void HideStateButtons() {
-            hmi.DestroyStateButtons();
-        }
-
-        public void UpdateDisplay() {
-
-            UpdateStateDisplay();
-
-            UpdateStateButtons();
-
-
-        }
-
-
-        public void CheckSelection() {
-
-
-            if (!brain.isAlone) { //If multibot check selection
-
-                if (Input.GetMouseButtonDown(0)) {
-                    if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit hit)) {
-
-                        if (hit.collider.gameObject == brain.gameObject) {
-
-                            selected = true;
-
-                            //Tell interface to select self
-                            hmi.selectedBotBrain = brain;
-
-                        } else {
-                            selected = false;
-                        }
-
-                        UpdateDisplay();
-                    }
-
-                }
-
-                UpdateOutline();
-
-            } else { //If alone always selected
-
-                selected = true;
-                hmi.selectedBotBrain = brain;
-
-            }
-
-
-
-        }
-
-
-        //Communication Methods
-        public void StateButtonListener(int id) {
-
-            brain.CallIntent(brain.supervisorio.eventsConteiner[id]);
-
-        }
-
-        public void AutoToggleListener(bool isAutoState) {
-
-            brain.isAuto = isAutoState;
-            brain.decisionHandler.myPlan = new List<FSM.Event>();
-            UpdateStateButtons();
-
-        }
-
-    }
-
 
 }

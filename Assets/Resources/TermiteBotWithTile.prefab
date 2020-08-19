@@ -54,10 +54,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   manager: {fileID: 0}
   centralController: {fileID: 0}
+  hmiHandler: {fileID: 5503709825864216733}
   animationHandler: {fileID: 1100389558484057332}
   decisionHandler: {fileID: 7943965151222145256}
   id: 0
   isAuto: 0
+  isAlone: 0
+--- !u!114 &5503709825864216733
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3835155847240057856}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6448aac3a690e554a82c96392b5a8018, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  brain: {fileID: 1625007552191252943}
+  hmi: {fileID: 0}
+  hovering: 0
+  selected: 0
 --- !u!114 &7943965151222145256
 MonoBehaviour:
   m_ObjectHideFlags: 0
