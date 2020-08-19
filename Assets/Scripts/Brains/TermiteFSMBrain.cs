@@ -22,9 +22,10 @@ public class TermiteFSMBrain : MonoBehaviour {
 
     // Handlers
     public TransitionHandler transitionHandler;
-    public TermiteAnimationComponent animationHandler;
     public HMIHandler hmiHandler;
-    DecisionHandler decisionHandler;
+
+    public TermiteAnimationComponent animationHandler;
+    public TermiteAIComponent decisionHandler;
 
     //Supervisor FSM
     public FSM supervisorio;
@@ -37,9 +38,6 @@ public class TermiteFSMBrain : MonoBehaviour {
     public bool isAuto = false; 
     bool isAlone;
     //bool isOn = false;
-
-
-
 
     void Update() {
 
@@ -58,61 +56,20 @@ public class TermiteFSMBrain : MonoBehaviour {
             hmiHandler.End();
         }
         
-        if (isAuto) {
-            
-            if(decisionHandler.myPlan.Count == 0) {
-                decisionHandler.PlanAction(10, 5);
-                foreach (var item in decisionHandler.myPlan) {
-                    //print(item);
-                }
-            } 
-            
-            if (!transitionHandler.IsTransitioning && !animationHandler.IsAnimating) {
-
-                if (supervisorio.FeasibleEvents(supervisorio.currentState, true).Contains(decisionHandler.myPlan[0])) {
-                    if (!supervisorio.currentState.marked) {
-                        CallIntent(decisionHandler.myPlan[0]);
-                        decisionHandler.myPlan.RemoveAt(0);
-                    }
-
-
-                    
-                } else {
-                    decisionHandler.PlanAction(10, 5);
-                }
-
-            }
-            
-        }
+        
 
         
 
     }
 
-    //Mouso Collision Functions
-
-    private void OnMouseEnter() {
-
-        hmiHandler.hovering = true;
-
-    }
-
-    private void OnMouseExit() {
-
-        hmiHandler.hovering = false;
-
-    }
-
+   
     // Initialization Routine Functions
 
     void InstantiateHandlers() {
         transitionHandler = new TransitionHandler(this);
-        
-        animationHandler.Initialize(manager);
-
-
         hmiHandler = new HMIHandler(this, manager.GetComponent<InterfaceFSM>());
-        decisionHandler = new DecisionHandler(this);
+
+        animationHandler.Initialize(manager);
     }
 
     public void Initialize(string automaton, List<FSM.Event> previousEvents) {
@@ -138,7 +95,7 @@ public class TermiteFSMBrain : MonoBehaviour {
 
     // State Logic Functions
 
-    void CallIntent(FSM.Event _event) {
+    public void CallIntent(FSM.Event _event) {
         //print(Time.time +"- ID:" + id +"- From: " + position + " Called Intent: (" + _event + "), alone?: " + isAlone);
         //FSM.Event _event = supervisorio.eventsConteiner[eventID];
         Coord dest = position;
@@ -202,109 +159,6 @@ public class TermiteFSMBrain : MonoBehaviour {
     }
 
     // Robot Handlers
-
-    class DecisionHandler {
-
-        TermiteFSMBrain brain;
-
-        public List<FSM.Event> myPlan = new List<FSM.Event>();
-
-        public DecisionHandler(TermiteFSMBrain brain) {
-
-            this.brain = brain;
-
-        }
-
-
-        public void PlanAction(int steps=5, int tries=5) {
-
-            List<FSM.Event> eventPlan = new List<FSM.Event>();
-            int maxScore = -1;
-
-            for (int i = 0; i < tries; i++) {
-
-                FSM.State imaginaryState = brain.supervisorio.currentState;
-                List<FSM.Event> tryPlan = new List<FSM.Event>();
-
-                for (int j = 0; j < steps; j++) {
-
-                    //print(i + "" + j + " Started--- "+ imaginaryState);
-                    List<FSM.Event> feasible = brain.supervisorio.FeasibleEvents(imaginaryState, true);
-
-                    if(feasible.Count > 0) {
-                        FSM.Event tryEvent = feasible[UnityEngine.Random.Range(0, feasible.Count)];
-                        //print(i + "" + j + " Did--- " + tryEvent);
-
-                        tryPlan.Add(tryEvent);
-
-                        imaginaryState = brain.supervisorio.ImagineEvent(tryEvent, imaginaryState);
-                        //print(i + "" + j + " Ended--- " + imaginaryState);
-                    }
-
-
-
-
-
-
-                }
-
-                if(EvaluatePlan(tryPlan, steps) > maxScore) {
-                    
-                    maxScore = EvaluatePlan(tryPlan, steps);
-                    eventPlan = tryPlan;
-                }
-                
-
-            }
-            //print("Score: " + maxScore);
-            myPlan = eventPlan;
-            
-
-        }
-
-        int EvaluatePlan(List<FSM.Event> tryPlan, int posImportance) {
-
-            int count = 0;
-
-            for (int i = 0; i < tryPlan.Count; i++) {
-
-                switch (tryPlan[i].type) {
-
-                    case "typeGet":
-                        count += 100 / ((i + 1) * posImportance);
-                        break;
-
-                    case "typePlace":
-                        if(i == 0) {
-                            count += 10000;
-                        } else {
-                            count += 100 / ((i + 1) * posImportance);
-                        }
-                        
-                        break;
-
-                    case "typeMovementIO":
-                        if(tryPlan[i].label == "out" ) {
-                            if(i == 0) {
-                                count += 1000;
-                            } else {
-                                count += 100 / ((i + 1) * posImportance);
-                            }
-                            
-                        }
-                        break;
-
-                    default:
-                        break;
-                }
-
-            }
-
-            return count;
-        }
-    }
-
-
     public class TransitionHandler{
 
         TermiteFSMBrain brain;
@@ -362,8 +216,22 @@ public class TermiteFSMBrain : MonoBehaviour {
     
     
     
+    
+
+    //Mouso Collision Functions
+    private void OnMouseEnter() {
+
+        hmiHandler.hovering = true;
+
+    }
+
+    private void OnMouseExit() {
+
+        hmiHandler.hovering = false;
+
+    }
     public class HMIHandler {
-        
+
         TermiteFSMBrain brain;
         InterfaceFSM hmi;
 
@@ -371,7 +239,7 @@ public class TermiteFSMBrain : MonoBehaviour {
         public bool selected = false;
 
         bool outlined {
-            get { return (hovering || selected);  }
+            get { return (hovering || selected); }
         }
 
         public HMIHandler(TermiteFSMBrain brain, InterfaceFSM hmi) {
@@ -398,7 +266,7 @@ public class TermiteFSMBrain : MonoBehaviour {
 
         public void UpdateStateDisplay() {
 
-            if(selected || brain.isAlone) {
+            if (selected || brain.isAlone) {
                 hmi.autoToggle.GetComponent<UnityEngine.UI.Toggle>().isOn = brain.isAuto;
 
             }
@@ -420,9 +288,9 @@ public class TermiteFSMBrain : MonoBehaviour {
                     HideStateButtons();
                 }
             }
-            
 
-            
+
+
         }
 
         public void HideStateButtons() {
@@ -447,7 +315,7 @@ public class TermiteFSMBrain : MonoBehaviour {
                 if (Input.GetMouseButtonDown(0)) {
                     if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit hit)) {
 
-                        if(hit.collider.gameObject == brain.gameObject) {
+                        if (hit.collider.gameObject == brain.gameObject) {
 
                             selected = true;
 
@@ -457,7 +325,7 @@ public class TermiteFSMBrain : MonoBehaviour {
                         } else {
                             selected = false;
                         }
-                  
+
                         UpdateDisplay();
                     }
 
@@ -481,17 +349,17 @@ public class TermiteFSMBrain : MonoBehaviour {
         public void StateButtonListener(int id) {
 
             brain.CallIntent(brain.supervisorio.eventsConteiner[id]);
-            
+
         }
 
-        public void AutoToggleListener( bool isAutoState) {
+        public void AutoToggleListener(bool isAutoState) {
 
             brain.isAuto = isAutoState;
             brain.decisionHandler.myPlan = new List<FSM.Event>();
             UpdateStateButtons();
 
         }
-        
+
     }
 
 
