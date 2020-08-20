@@ -48,9 +48,6 @@ public class TermiteFSMBrain : MonoBehaviour {
             print("Error: supervisor not loaded yet");
         }
 
-
-        // Multibot handling
-        //hmiHandler.CheckSelection();
         
         if (supervisorio.currentState.marked) {
             hmiHandler.End();
@@ -134,7 +131,6 @@ public class TermiteFSMBrain : MonoBehaviour {
 
             transitionHandler.StartTransition(_event.id, dest);
             animationHandler.StartAnimation(_event.id);
-            hmiHandler.HideStateButtons();
 
         }
 
@@ -142,7 +138,7 @@ public class TermiteFSMBrain : MonoBehaviour {
     public void UpdateState() {
 
         transitionHandler.EndTransition();
-        hmiHandler.UpdateDisplay();
+        hmiHandler.UpdateStateButtons();
 
         animationHandler.FixPosition();
 

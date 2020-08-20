@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class TermiteInterfaceComponent : MonoBehaviour
 {
+    // External References
     public TermiteFSMBrain brain;
     public InterfaceFSM hmi;
+
 
     public bool hovering = false;
     public bool selected = false;
@@ -19,78 +21,27 @@ public class TermiteInterfaceComponent : MonoBehaviour
     }
 
     private void Update() {
-        CheckSelection();
+        
+        CheckSelection(); //Handle bot selection mechanic
+
+        //While transitioning keep buttons hidden
+        if(selected && brain.transitionHandler.IsTransitioning) {
+            hmi.DestroyStateButtons();
+        }
+
     }
-    //Mouso Collision Functions
+
+
+    //Mouse hovering handlers
     private void OnMouseEnter() {
-
         hovering = true;
-
     }
-
     private void OnMouseExit() {
-
         hovering = false;
-
-    }
-
-    public void End() {
-        hmi.endText.SetActive(true);
-    }
-
-    public void UpdateOutline() {
-
-        if (outlined && !brain.isAlone) {
-            brain.gameObject.GetComponent<MeshRenderer>().material.SetFloat("_FirstOutlineWidth", 0.03f);
-        } else {
-            brain.gameObject.GetComponent<MeshRenderer>().material.SetFloat("_FirstOutlineWidth", 0f);
-        }
-
-    }
-
-    public void UpdateStateDisplay() {
-
-        if (selected || brain.isAlone) {
-            hmi.autoToggle.GetComponent<UnityEngine.UI.Toggle>().isOn = brain.isAuto;
-
-        }
-
-
-
-    }
-
-    public void UpdateStateButtons() {
-
-        if (selected) {
-            if (!brain.isAuto) {
-
-                hmi.DestroyStateButtons();
-
-                hmi.CreateStateButtons();
-
-            } else {
-                HideStateButtons();
-            }
-        }
-
-
-
-    }
-
-    public void HideStateButtons() {
-        hmi.DestroyStateButtons();
-    }
-
-    public void UpdateDisplay() {
-
-        UpdateStateDisplay();
-
-        UpdateStateButtons();
-
-
     }
 
 
+    //Check which bot is selected; activate or hide outline; update state buttons on selection change
     public void CheckSelection() {
 
 
@@ -104,30 +55,58 @@ public class TermiteInterfaceComponent : MonoBehaviour
                         selected = true;
 
                         //Tell interface to select self
-                        hmi.selectedBotBrain = brain;
+                        hmi.SelectBot(brain);
 
                     } else {
                         selected = false;
                     }
 
-                    UpdateDisplay();
+                    //UpdateStateButtons();
                 }
 
             }
 
             UpdateOutline();
 
-        } else { //If alone always selected
+        } else if(!selected) { //If alone always selected
 
             selected = true;
-            hmi.selectedBotBrain = brain;
+            hmi.SelectBot(brain);
 
         }
 
 
 
     }
+    public void UpdateOutline() {
 
+        if (outlined && !brain.isAlone) {
+            brain.gameObject.GetComponent<MeshRenderer>().material.SetFloat("_FirstOutlineWidth", 0.03f);
+        } else {
+            brain.gameObject.GetComponent<MeshRenderer>().material.SetFloat("_FirstOutlineWidth", 0f);
+        }
+
+    }
+
+    // InterfaceFSM communication functions
+    public void End() {
+        hmi.endText.SetActive(true);
+    }
+
+    public void UpdateStateButtons() {
+
+        if (selected) {
+
+            hmi.DestroyStateButtons();
+
+            if (!brain.isAuto) {
+
+                hmi.CreateStateButtons();
+
+            } 
+        }
+
+    }
 
     //Communication Methods
     public void StateButtonListener(int id) {
@@ -140,7 +119,6 @@ public class TermiteInterfaceComponent : MonoBehaviour
 
         brain.isAuto = isAutoState;
         brain.decisionHandler.myPlan = new List<FSM.Event>();
-        UpdateStateButtons();
 
     }
 }

@@ -30,13 +30,14 @@ public class InterfaceFSM : MonoBehaviour {
 
         disbandButton.SetActive(gameObject.GetComponent<CentralController>().botList.Count > 1);
         UpdateStateDisplay();
+        UpdateAutoToggle();
     }
 
     
     public void Initialize() {
 
         //Set first selected bot
-        selectedBotBrain = gameObject.GetComponent<CentralController>().botList[0].GetComponent<TermiteFSMBrain>();
+        SelectBot(gameObject.GetComponent<CentralController>().botList[0].GetComponent<TermiteFSMBrain>());
 
         SetupListeners();
 
@@ -110,16 +111,31 @@ public class InterfaceFSM : MonoBehaviour {
     }
 
     
+    public void SelectBot(TermiteFSMBrain botBrain) {
+        selectedBotBrain = botBrain;
+
+        DestroyStateButtons();
+        CreateStateButtons();
+    }
+
     //Update the state display to the selectedBot's current state
     public void UpdateStateDisplay() {
         stateDisplay.GetComponent<Text>().text = selectedBotBrain.supervisorio.currentState.ToString();
     }
 
+    public void UpdateAutoToggle() {
+        autoToggle.GetComponent<UnityEngine.UI.Toggle>().isOn = selectedBotBrain.isAuto;
+    }
     
     // Button Listeners ----
     void AutoToggleListener(bool autoToggleState) {
 
         selectedBotBrain.hmiHandler.AutoToggleListener(autoToggleState);
+
+        DestroyStateButtons();
+        if (!autoToggleState) {
+            CreateStateButtons();
+        }
 
     }
 

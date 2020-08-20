@@ -8,6 +8,7 @@ public class TermiteAnimationComponent : MonoBehaviour
     // External References
     public TermiteFSMBrain brain;
     public TermiteTS tileSystem;
+
     // Animation transforms
     public Transform coreTransform;
     public Transform myTileTransform;
