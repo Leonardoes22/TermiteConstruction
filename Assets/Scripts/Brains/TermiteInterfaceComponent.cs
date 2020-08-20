@@ -29,6 +29,10 @@ public class TermiteInterfaceComponent : MonoBehaviour
             hmi.DestroyStateButtons();
         }
 
+        if (brain.supervisorio.currentState.marked) {
+            End();
+        }
+
     }
 
 

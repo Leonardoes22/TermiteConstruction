@@ -21,9 +21,8 @@ public class TermiteFSMBrain : MonoBehaviour {
     public CentralController centralController;
 
     // Handlers
-    public TransitionHandler transitionHandler;
+    public TermiteCommunicationComponent transitionHandler;
     public TermiteInterfaceComponent hmiHandler;
-
     public TermiteAnimationComponent animationHandler;
     public TermiteAIComponent decisionHandler;
 
@@ -48,21 +47,6 @@ public class TermiteFSMBrain : MonoBehaviour {
             print("Error: supervisor not loaded yet");
         }
 
-        
-        if (supervisorio.currentState.marked) {
-            hmiHandler.End();
-        }
-
-    }
-
-   
-    // Initialization Routine Functions
-
-    void InstantiateHandlers() {
-        transitionHandler = new TransitionHandler(this);
-
-        animationHandler.Initialize(manager);
-        hmiHandler.Initialize(manager);
     }
 
     public void Initialize(string automaton, List<FSM.Event> previousEvents) {
@@ -77,7 +61,8 @@ public class TermiteFSMBrain : MonoBehaviour {
         position = supervisorio.currentState.GetPosition();
 
         // Instantiate Handlers
-        InstantiateHandlers();
+        animationHandler.Initialize(manager);
+        hmiHandler.Initialize(manager);
 
         // Set initial position
         animationHandler.FixPosition();
@@ -86,8 +71,8 @@ public class TermiteFSMBrain : MonoBehaviour {
 
     }
 
-    // State Logic Functions
 
+    // State Logic Functions
     public void CallIntent(FSM.Event _event) {
         //print(Time.time +"- ID:" + id +"- From: " + position + " Called Intent: (" + _event + "), alone?: " + isAlone);
         //FSM.Event _event = supervisorio.eventsConteiner[eventID];
@@ -150,61 +135,5 @@ public class TermiteFSMBrain : MonoBehaviour {
 
     }
 
-    // Robot Handlers
-    public class TransitionHandler{
-
-        TermiteFSMBrain brain;
-        bool _isTransitioning;
-
-        // Transition
-        private FSM.Event _event;
-        //private Coord reservedPos;
-        private Coord reservedDest;
-
-        public bool IsTransitioning { get { return _isTransitioning; } }
-
-        public TransitionHandler(TermiteFSMBrain brain) {
-            this.brain = brain;
-            _isTransitioning = false;
-        }
-
-
-        public void StartTransition(int eventID, Coord dest) {
-
-            //print(Time.time + "- Started Transition: " + dest + " e " + brain.position);
-
-            _event = brain.supervisorio.eventsConteiner[eventID];
-
-            reservedDest = dest;
-
-            _isTransitioning = true;
-
-
-
-        }
-
-        public void EndTransition() {
-
-            brain.supervisorio.TriggerEvent(_event); //TODO bugging
-            brain.centralController.NotifyTransistionEnd(brain.gameObject, _event);
-            _isTransitioning = false;
-            //print(Time.time + "- Ended Transition");
-
-        }
-
-        public bool Allow(Coord dest) {
-
-            if((dest != brain.position && (dest != reservedDest || !IsTransitioning)) ||  dest == Coord.origin) {
-                //print("Allowed: " + dest + "mine" + brain.position);
-                return true;
-                
-            }
-            //print("Blocked: " + dest);
-            return false;
-        }
-
-
-    }
     
-
 }

@@ -54,6 +54,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   manager: {fileID: 0}
   centralController: {fileID: 0}
+  transitionHandler: {fileID: 8506175343740053712}
   hmiHandler: {fileID: 5503709825864216733}
   animationHandler: {fileID: 1100389558484057332}
   decisionHandler: {fileID: 7943965151222145256}
@@ -86,6 +87,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a60bbceb4a6003247ae12fc6a7bd526c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  brain: {fileID: 1625007552191252943}
+--- !u!114 &8506175343740053712
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3835155847240057856}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4d0c8208823f764d8b1e7902bdd976d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   brain: {fileID: 1625007552191252943}
