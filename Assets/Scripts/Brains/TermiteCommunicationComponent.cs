@@ -34,6 +34,7 @@ public class TermiteCommunicationComponent : MonoBehaviour
         brain.supervisorio.TriggerEvent(_event); //TODO bugging
         brain.centralController.NotifyTransistionEnd(brain.gameObject, _event);
         _isTransitioning = false;
+
         //print(Time.time + "- Ended Transition");
 
     }
@@ -48,6 +49,7 @@ public class TermiteCommunicationComponent : MonoBehaviour
         //print("Blocked: " + dest);
         return false;
     }
+
 }
 
 

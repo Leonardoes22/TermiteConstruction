@@ -107,7 +107,8 @@ public class CentralController : MonoBehaviour
             if (bot == source) {
 
             } else {
-                bot.GetComponent<TermiteFSMBrain>().supervisorio.TriggerEvent(_event, true);
+                bot.GetComponent<TermiteFSMBrain>().unknowEventsBuffer.Add(_event);
+                
             }
         }
 

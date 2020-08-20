@@ -33,6 +33,8 @@ public class TermiteFSMBrain : MonoBehaviour {
     // Variables
     public int id;
     public Coord position;
+    public List<FSM.Event> unknowEventsBuffer = new List<FSM.Event>();
+
 
     //States
     public bool isAuto = false; 
@@ -41,6 +43,8 @@ public class TermiteFSMBrain : MonoBehaviour {
     void Update() {
 
         isAlone = centralController.botList.Count == 1;
+
+        AcknowledgeExternalEvents();
         
         // Error handling
         if (supervisorio == null) {
@@ -132,8 +136,19 @@ public class TermiteFSMBrain : MonoBehaviour {
 
         position = supervisorio.currentState.GetPosition();
         
-
     }
 
+    public void AcknowledgeExternalEvents() {
+
+        if(unknowEventsBuffer.Count > 0) { 
+
+            while(unknowEventsBuffer.Count > 0) {
+                supervisorio.TriggerEvent(unknowEventsBuffer[0], true);
+                unknowEventsBuffer.RemoveAt(0);
+            }
+            hmiHandler.UpdateStateButtons();
+        }
+
+    }
     
 }
