@@ -75,11 +75,12 @@ public class TermiteAnimationComponent : MonoBehaviour
         if (IsAnimating) {
             Animate();
         }
-
+        print(isPlacing);
     }
 
     public void Initialize(GameObject manager) {
-        tileSystem = manager.GetComponent<TermiteTS>(); 
+        tileSystem = manager.GetComponent<TermiteTS>();
+        isPlacing = false; //fix starting with isPlacing == true;
     }
 
     // Fix the bot position to prevent animation errors spreading
@@ -188,6 +189,7 @@ public class TermiteAnimationComponent : MonoBehaviour
 
                 animationBuffer[0].Invoke(); // Call animation command
                 animationBuffer.RemoveAt(0); // Remove animation command from queue
+                
 
             } else {
                 //OBS: Maybe the UpdateState function could be in the TermiteBotBrain
