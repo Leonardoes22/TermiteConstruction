@@ -105,10 +105,9 @@ public class CentralController : MonoBehaviour
 
         foreach (var bot in botList) {
             if (bot == source) {
-
-            } else {
-                bot.GetComponent<TermiteFSMBrain>().unknowEventsBuffer.Add(_event);
                 
+            } else {
+                bot.GetComponent<TermiteCommunicationComponent>().unknownEventsBuffer.Add(_event);
             }
         }
 

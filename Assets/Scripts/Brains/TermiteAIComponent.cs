@@ -4,7 +4,12 @@ using UnityEngine;
 
 public class TermiteAIComponent : MonoBehaviour
 {
+    // Termite Components
     public TermiteFSMBrain brain;
+    public TermiteInterfaceComponent interfaceComponent;
+    public TermiteCommunicationComponent communicationComponent;
+    public TermiteAnimationComponent animationComponent;
+
 
     public List<FSM.Event> myPlan = new List<FSM.Event>();
 
@@ -18,11 +23,11 @@ public class TermiteAIComponent : MonoBehaviour
                 }
             }
 
-            if (!brain.transitionHandler.IsTransitioning && !brain.animationHandler.IsAnimating) {
+            if (!communicationComponent.IsTransitioning && !animationComponent.IsAnimating) {
 
                 if (brain.supervisorio.FeasibleEvents(brain.supervisorio.currentState, true).Contains(myPlan[0])) {
                     if (!brain.supervisorio.currentState.marked) {
-                        brain.CallIntent(myPlan[0]);
+                        brain.ProcessIntent(myPlan[0]);
                         myPlan.RemoveAt(0);
                     }
 

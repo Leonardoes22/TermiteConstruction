@@ -16,15 +16,16 @@ using UnityEngine.UIElements;
 
 public class TermiteFSMBrain : MonoBehaviour {
 
-    // External gameobjects
-    public GameObject manager;
-    public CentralController centralController;
-
-    // Handlers
+    // Termite Components
     public TermiteCommunicationComponent transitionHandler;
     public TermiteInterfaceComponent hmiHandler;
     public TermiteAnimationComponent animationHandler;
     public TermiteAIComponent decisionHandler;
+
+    // External References
+    public GameObject manager;
+    public CentralController centralController;
+
 
     //Supervisor FSM
     public FSM supervisorio;
@@ -33,18 +34,16 @@ public class TermiteFSMBrain : MonoBehaviour {
     // Variables
     public int id;
     public Coord position;
-    public List<FSM.Event> unknowEventsBuffer = new List<FSM.Event>();
 
 
     //States
     public bool isAuto = false; 
-    public bool isAlone;
+
+    //Temp variable
+    public bool isAlone { get { return transitionHandler.isAlone; } }
 
     void Update() {
 
-        isAlone = centralController.botList.Count == 1;
-
-        AcknowledgeExternalEvents();
         
         // Error handling
         if (supervisorio == null) {
@@ -67,6 +66,7 @@ public class TermiteFSMBrain : MonoBehaviour {
         // Instantiate Handlers
         animationHandler.Initialize(manager);
         hmiHandler.Initialize(manager);
+        transitionHandler.Initialize(manager);
 
         // Set initial position
         animationHandler.FixPosition();
@@ -77,7 +77,7 @@ public class TermiteFSMBrain : MonoBehaviour {
 
 
     // State Logic Functions
-    public void CallIntent(FSM.Event _event) {
+    public void ProcessIntent(FSM.Event _event) {
         //print(Time.time +"- ID:" + id +"- From: " + position + " Called Intent: (" + _event + "), alone?: " + isAlone);
         //FSM.Event _event = supervisorio.eventsConteiner[eventID];
         Coord dest = position;
@@ -115,40 +115,13 @@ public class TermiteFSMBrain : MonoBehaviour {
 
         }
 
+        transitionHandler.CallIntent(_event.id, dest);
 
-        if (isAlone || (!isAlone && centralController.RequestIntent(gameObject, dest))) {
 
-            transitionHandler.StartTransition(_event.id, dest);
-            animationHandler.StartAnimation(_event.id);
-
-        }
 
     }
-    public void UpdateState() {
+  
 
-        transitionHandler.EndTransition();
-        hmiHandler.UpdateStateButtons();
-
-        animationHandler.FixPosition();
-
-        //manager.GetComponent<TermiteTS>().UpdateMap(supervisorio.currentState.heightMap);
-        centralController.HeightMapUp(supervisorio.currentState.heightMap);
-
-        position = supervisorio.currentState.GetPosition();
-        
-    }
-
-    public void AcknowledgeExternalEvents() {
-
-        if(unknowEventsBuffer.Count > 0) { 
-
-            while(unknowEventsBuffer.Count > 0) {
-                supervisorio.TriggerEvent(unknowEventsBuffer[0], true);
-                unknowEventsBuffer.RemoveAt(0);
-            }
-            hmiHandler.UpdateStateButtons();
-        }
-
-    }
+    
     
 }

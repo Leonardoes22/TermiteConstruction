@@ -5,14 +5,19 @@ using UnityEngine;
 
 public class TermiteInterfaceComponent : MonoBehaviour
 {
-    // External References
+    // Termite Components
     public TermiteFSMBrain brain;
+    public TermiteCommunicationComponent communicationComponent;
+    public TermiteAnimationComponent animationComponent;
+    public TermiteAIComponent AIComponent;
+
+    // External References
     public InterfaceFSM hmi;
 
 
+    // Interface and Selection States
     public bool hovering = false;
     public bool selected { get{ return hmi.selectedBotBrain == brain; } }
-
     bool outlined {
         get { return (hovering || selected); }
     }
@@ -21,12 +26,13 @@ public class TermiteInterfaceComponent : MonoBehaviour
         hmi = manager.GetComponent<InterfaceFSM>();
     }
 
+    // Passive Behaviour
     private void Update() {
         
         CheckSelection(); //Handle bot selection mechanic
 
         //While transitioning keep buttons hidden
-        if(selected && brain.transitionHandler.IsTransitioning) {
+        if(selected && communicationComponent.IsTransitioning) {
             hmi.DestroyStateButtons();
         }
 
@@ -55,7 +61,7 @@ public class TermiteInterfaceComponent : MonoBehaviour
             if (Input.GetMouseButtonDown(0)) {
                 if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit hit)) {
 
-                    if (hit.collider.gameObject == brain.gameObject) {
+                    if (hit.collider.gameObject == gameObject) {
 
                         //Tell interface to select self
                         hmi.SelectBot(brain);
@@ -80,9 +86,9 @@ public class TermiteInterfaceComponent : MonoBehaviour
     public void UpdateOutline() {
 
         if (outlined && !brain.isAlone) {
-            brain.gameObject.GetComponent<MeshRenderer>().material.SetFloat("_FirstOutlineWidth", 0.03f);
+            gameObject.GetComponent<MeshRenderer>().material.SetFloat("_FirstOutlineWidth", 0.03f);
         } else {
-            brain.gameObject.GetComponent<MeshRenderer>().material.SetFloat("_FirstOutlineWidth", 0f);
+            gameObject.GetComponent<MeshRenderer>().material.SetFloat("_FirstOutlineWidth", 0f);
         }
 
     }
@@ -110,14 +116,14 @@ public class TermiteInterfaceComponent : MonoBehaviour
     //Communication Methods
     public void StateButtonListener(int id) {
 
-        brain.CallIntent(brain.supervisorio.eventsConteiner[id]);
+        brain.ProcessIntent(brain.supervisorio.eventsConteiner[id]);
 
     }
 
     public void AutoToggleListener(bool isAutoState) {
 
         brain.isAuto = isAutoState;
-        brain.decisionHandler.myPlan = new List<FSM.Event>();
+        AIComponent.myPlan = new List<FSM.Event>();
 
     }
 }

@@ -27,6 +27,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   brain: {fileID: 1625007552191252943}
+  interfaceComponent: {fileID: 5503709825864216733}
+  communicationComponent: {fileID: 8506175343740053712}
+  AIComponent: {fileID: 7943965151222145256}
   tileSystem: {fileID: 0}
   coreTransform: {fileID: 243876302616491539}
   myTileTransform: {fileID: 243876303427881956}
@@ -74,9 +77,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   brain: {fileID: 1625007552191252943}
+  communicationComponent: {fileID: 8506175343740053712}
+  animationComponent: {fileID: 1100389558484057332}
+  AIComponent: {fileID: 7943965151222145256}
   hmi: {fileID: 0}
   hovering: 0
-  selected: 0
 --- !u!114 &7943965151222145256
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -90,6 +95,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   brain: {fileID: 1625007552191252943}
+  interfaceComponent: {fileID: 5503709825864216733}
+  communicationComponent: {fileID: 8506175343740053712}
+  animationComponent: {fileID: 1100389558484057332}
 --- !u!114 &8506175343740053712
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -103,6 +111,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   brain: {fileID: 1625007552191252943}
+  interfaceComponent: {fileID: 5503709825864216733}
+  animationComponent: {fileID: 1100389558484057332}
+  AIComponent: {fileID: 7943965151222145256}
+  centralController: {fileID: 0}
 --- !u!1001 &5051025550400740617
 PrefabInstance:
   m_ObjectHideFlags: 0

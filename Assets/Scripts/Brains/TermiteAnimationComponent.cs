@@ -5,8 +5,13 @@ using UnityEngine;
 
 public class TermiteAnimationComponent : MonoBehaviour
 {
-    // External References
+    // Termite Components
     public TermiteFSMBrain brain;
+    public TermiteInterfaceComponent interfaceComponent;
+    public TermiteCommunicationComponent communicationComponent;
+    public TermiteAIComponent AIComponent;
+
+    // External References
     public TermiteTS tileSystem;
 
     // Animation transforms
@@ -70,6 +75,7 @@ public class TermiteAnimationComponent : MonoBehaviour
         if (IsAnimating) {
             Animate();
         }
+
     }
 
     public void Initialize(GameObject manager) {
@@ -98,7 +104,6 @@ public class TermiteAnimationComponent : MonoBehaviour
         if (debugMode) { print("FixPosition: " + transform.position); }
 
     }
-
 
     public void StartAnimation(int eventID) {
         //OBS: Still needs refactoring
@@ -189,7 +194,7 @@ public class TermiteAnimationComponent : MonoBehaviour
                 // If no steps left: end animation and update state
 
                 IsAnimating = false;
-                brain.UpdateState();
+                communicationComponent.EndTransition();
 
                 if (debugMode) { print("Animation Ended - Updating State"); }
 

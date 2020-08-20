@@ -4,16 +4,32 @@ using UnityEngine;
 
 public class TermiteCommunicationComponent : MonoBehaviour
 {
+    // Termite Components
     public TermiteFSMBrain brain;
-    bool _isTransitioning = false;
+    public TermiteInterfaceComponent interfaceComponent;
+    public TermiteAnimationComponent animationComponent;
+    public TermiteAIComponent AIComponent;
+
+    //External References
+    public CentralController centralController;
+    
+    public bool isAlone { get { return centralController.botList.Count == 1; } }
 
     // Transition
     private FSM.Event _event;
-    //private Coord reservedPos;
     private Coord reservedDest;
+    public List<FSM.Event> unknownEventsBuffer = new List<FSM.Event>();
 
-    public bool IsTransitioning { get { return _isTransitioning; } }
+    public bool IsTransitioning { get; set; } = false;
 
+    private void Update() {
+        AcknowledgeExternalEvents();
+
+    }
+
+    public void Initialize(GameObject manager) {
+        centralController = manager.GetComponent<CentralController>();
+    }
 
     public void StartTransition(int eventID, Coord dest) {
 
@@ -23,7 +39,7 @@ public class TermiteCommunicationComponent : MonoBehaviour
 
         reservedDest = dest;
 
-        _isTransitioning = true;
+        IsTransitioning = true;
 
 
 
@@ -32,8 +48,15 @@ public class TermiteCommunicationComponent : MonoBehaviour
     public void EndTransition() {
 
         brain.supervisorio.TriggerEvent(_event); //TODO bugging
-        brain.centralController.NotifyTransistionEnd(brain.gameObject, _event);
-        _isTransitioning = false;
+        centralController.NotifyTransistionEnd(gameObject, _event);
+        IsTransitioning = false;
+
+        interfaceComponent.UpdateStateButtons();
+        animationComponent.FixPosition();
+
+        centralController.HeightMapUp(brain.supervisorio.currentState.heightMap);
+        brain.position = brain.supervisorio.currentState.GetPosition();
+        
 
         //print(Time.time + "- Ended Transition");
 
@@ -50,6 +73,30 @@ public class TermiteCommunicationComponent : MonoBehaviour
         return false;
     }
 
+
+    public void CallIntent(int eventID, Coord destination) {
+
+        if(centralController.RequestIntent(gameObject, destination)) {
+
+            StartTransition(eventID, destination);
+            animationComponent.StartAnimation(eventID);
+
+        }
+
+    }
+
+    public void AcknowledgeExternalEvents() {
+
+        if (unknownEventsBuffer.Count > 0) {
+
+            while (unknownEventsBuffer.Count > 0) {
+                brain.supervisorio.TriggerEvent(unknownEventsBuffer[0], true);
+                unknownEventsBuffer.RemoveAt(0);
+            }
+            interfaceComponent.UpdateStateButtons();
+        }
+
+    }
 }
 
 
