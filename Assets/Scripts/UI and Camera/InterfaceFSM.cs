@@ -101,7 +101,7 @@ public class InterfaceFSM : MonoBehaviour {
 
             //Disband Button
             disbandButton.SetActive(true);
-            disbandButton.GetComponentInChildren<Button>().onClick.AddListener(() => gameObject.GetComponent<CentralController>().DisbandBot(selectedBotBrain.gameObject));
+            disbandButton.GetComponentInChildren<Button>().onClick.AddListener(DisBandBotListener);
 
             //Add Bot Button
             addBotButton.SetActive(true);
@@ -141,6 +141,12 @@ public class InterfaceFSM : MonoBehaviour {
 
     void FastAnimToggleListener(bool fastAnimToggleState) {
         gameObject.GetComponent<SimManager>().FastAnimToggleListener(fastAnimToggleState);
+    }
+
+    void DisBandBotListener() {
+
+        gameObject.GetComponent<CentralController>().DisbandBot(selectedBotBrain.gameObject);
+        SelectBot(gameObject.GetComponent<CentralController>().botList[0].GetComponent<TermiteFSMBrain>());
     }
 
 

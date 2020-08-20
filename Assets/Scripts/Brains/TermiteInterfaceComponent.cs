@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 
 public class TermiteInterfaceComponent : MonoBehaviour
@@ -10,7 +11,7 @@ public class TermiteInterfaceComponent : MonoBehaviour
 
 
     public bool hovering = false;
-    public bool selected = false;
+    public bool selected { get{ return hmi.selectedBotBrain == brain; } }
 
     bool outlined {
         get { return (hovering || selected); }
@@ -56,16 +57,11 @@ public class TermiteInterfaceComponent : MonoBehaviour
 
                     if (hit.collider.gameObject == brain.gameObject) {
 
-                        selected = true;
-
                         //Tell interface to select self
                         hmi.SelectBot(brain);
 
-                    } else {
-                        selected = false;
-                    }
+                    } 
 
-                    //UpdateStateButtons();
                 }
 
             }
@@ -74,7 +70,6 @@ public class TermiteInterfaceComponent : MonoBehaviour
 
         } else if(!selected) { //If alone always selected
 
-            selected = true;
             hmi.SelectBot(brain);
 
         }

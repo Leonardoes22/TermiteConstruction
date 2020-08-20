@@ -29,14 +29,14 @@ public class TermiteFSMBrain : MonoBehaviour {
     //Supervisor FSM
     public FSM supervisorio;
 
-    // Working On TODO
+
+    // Variables
     public int id;
-    bool hasTile { get { return supervisorio != null ? supervisorio.currentState.hasTile : false; } }
     public Coord position;
 
+    //States
     public bool isAuto = false; 
     public bool isAlone;
-    //bool isOn = false;
 
     void Update() {
 
