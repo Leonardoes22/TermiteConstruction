@@ -20,7 +20,6 @@ public class TermiteFSMBrain : MonoBehaviour {
     public TermiteCommunicationComponent transitionHandler;
     public TermiteInterfaceComponent hmiHandler;
     public TermiteAnimationComponent animationHandler;
-    public TermiteAIComponent decisionHandler;
 
     // External References
     public GameObject manager;
@@ -34,6 +33,7 @@ public class TermiteFSMBrain : MonoBehaviour {
     // Variables
     public int id;
     public Coord position;
+    public List<FSM.Event> myPlan = new List<FSM.Event>();
 
 
     //States
@@ -49,6 +49,47 @@ public class TermiteFSMBrain : MonoBehaviour {
         if (supervisorio == null) {
             print("Error: supervisor not loaded yet");
         }
+        
+        if (isAuto) {
+            if (!transitionHandler.IsTransitioning && !animationHandler.IsAnimating) {
+
+                List<FSM.Event> feasible = supervisorio.FeasibleEvents(supervisorio.currentState, true);
+
+                int rand = UnityEngine.Random.Range(0, feasible.Count - 1);
+
+                ProcessIntent(feasible[rand]);
+
+            }
+        }
+
+        /*
+        if (isAuto) {
+
+            if (myPlan.Count == 0) {
+                PlanAction(10, 5);
+                foreach (var item in myPlan) {
+                    //print(item);
+                }
+            }
+
+            if (!transitionHandler.IsTransitioning && !animationHandler.IsAnimating) {
+
+                if (supervisorio.FeasibleEvents(supervisorio.currentState, true).Contains(myPlan[0])) {
+                    if (!supervisorio.currentState.marked) {
+                        ProcessIntent(myPlan[0]);
+                        myPlan.RemoveAt(0);
+                    }
+
+
+
+                } else {
+                    PlanAction(10, 5);
+                }
+
+            }
+
+        }
+        */
 
     }
 
@@ -120,8 +161,88 @@ public class TermiteFSMBrain : MonoBehaviour {
 
 
     }
-  
 
-    
-    
+    public void PlanAction(int steps = 5, int tries = 5) {
+
+        List<FSM.Event> eventPlan = new List<FSM.Event>();
+        int maxScore = -1;
+
+        for (int i = 0; i < tries; i++) {
+
+            FSM.State imaginaryState = supervisorio.currentState;
+            List<FSM.Event> tryPlan = new List<FSM.Event>();
+
+            for (int j = 0; j < steps; j++) {
+
+                //print(i + "" + j + " Started--- "+ imaginaryState);
+                List<FSM.Event> feasible = supervisorio.FeasibleEvents(imaginaryState, true);
+
+                if (feasible.Count > 0) {
+                    FSM.Event tryEvent = feasible[UnityEngine.Random.Range(0, feasible.Count)];
+                    //print(i + "" + j + " Did--- " + tryEvent);
+
+                    tryPlan.Add(tryEvent);
+
+                    imaginaryState = supervisorio.ImagineEvent(tryEvent, imaginaryState);
+                    //print(i + "" + j + " Ended--- " + imaginaryState);
+                }
+
+            }
+
+            if (EvaluatePlan(tryPlan, steps) > maxScore) {
+
+                maxScore = EvaluatePlan(tryPlan, steps);
+                eventPlan = tryPlan;
+            }
+
+
+        }
+        //print("Score: " + maxScore);
+        myPlan = eventPlan;
+
+
+    }
+
+    int EvaluatePlan(List<FSM.Event> tryPlan, int posImportance) {
+
+        int count = 0;
+
+        for (int i = 0; i < tryPlan.Count; i++) {
+
+            switch (tryPlan[i].type) {
+
+                case "typeGet":
+                    count += 100 / ((i + 1) * posImportance);
+                    break;
+
+                case "typePlace":
+                    if (i == 0) {
+                        count += 10000;
+                    } else {
+                        count += 100 / ((i + 1) * posImportance);
+                    }
+
+                    break;
+
+                case "typeMovementIO":
+                    if (tryPlan[i].label == "out") {
+                        if (i == 0) {
+                            count += 1000;
+                        } else {
+                            count += 100 / ((i + 1) * posImportance);
+                        }
+
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+
+        }
+
+        return count;
+    }
+
+
 }

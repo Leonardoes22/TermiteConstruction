@@ -9,7 +9,6 @@ public class TermiteAnimationComponent : MonoBehaviour
     public TermiteFSMBrain brain;
     public TermiteInterfaceComponent interfaceComponent;
     public TermiteCommunicationComponent communicationComponent;
-    public TermiteAIComponent AIComponent;
 
     // External References
     public TermiteTS tileSystem;
@@ -75,7 +74,6 @@ public class TermiteAnimationComponent : MonoBehaviour
         if (IsAnimating) {
             Animate();
         }
-        print(isPlacing);
     }
 
     public void Initialize(GameObject manager) {

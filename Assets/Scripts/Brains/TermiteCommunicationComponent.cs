@@ -8,7 +8,6 @@ public class TermiteCommunicationComponent : MonoBehaviour
     public TermiteFSMBrain brain;
     public TermiteInterfaceComponent interfaceComponent;
     public TermiteAnimationComponent animationComponent;
-    public TermiteAIComponent AIComponent;
 
     //External References
     public CentralController centralController;

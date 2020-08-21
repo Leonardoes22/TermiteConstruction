@@ -9,7 +9,6 @@ public class TermiteInterfaceComponent : MonoBehaviour
     public TermiteFSMBrain brain;
     public TermiteCommunicationComponent communicationComponent;
     public TermiteAnimationComponent animationComponent;
-    public TermiteAIComponent AIComponent;
 
     // External References
     public InterfaceFSM hmi;
@@ -123,7 +122,7 @@ public class TermiteInterfaceComponent : MonoBehaviour
     public void AutoToggleListener(bool isAutoState) {
 
         brain.isAuto = isAutoState;
-        AIComponent.myPlan = new List<FSM.Event>();
+        brain.myPlan = new List<FSM.Event>();
 
     }
 }
