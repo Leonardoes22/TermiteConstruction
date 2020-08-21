@@ -17,9 +17,10 @@ using UnityEngine.UIElements;
 public class TermiteFSMBrain : MonoBehaviour {
 
     // Termite Components
+    public TermiteAnimationComponent animationComponent;
     public TermiteCommunicationComponent communicationComponent;
     public TermiteInterfaceComponent interfaceComponent;
-    public TermiteAnimationComponent animationComponent;
+    
 
     // External References
     public GameObject manager;
@@ -42,56 +43,7 @@ public class TermiteFSMBrain : MonoBehaviour {
     //Temp variable
     public bool isAlone { get { return communicationComponent.isAlone; } }
 
-    void Update() {
-
-        
-        // Error handling
-        if (supervisorio == null) {
-            print("Error: supervisor not loaded yet");
-        }
-        /*
-        if (isAuto) {
-            if (!communicationComponent.IsTransitioning && !animationComponent.IsAnimating) {
-
-                List<FSM.Event> feasible = supervisorio.FeasibleEvents(supervisorio.currentState, true);
-
-                int rand = UnityEngine.Random.Range(0, feasible.Count - 1);
-
-                ProcessIntent(feasible[rand]);
-
-            }
-        }
-        */
-        
-        if (isAuto) {
-
-            if (myPlan.Count == 0) {
-                PlanAction(10, 5);
-                foreach (var item in myPlan) {
-                    //print(item);
-                }
-            }
-
-            if (!communicationComponent.IsTransitioning && !animationComponent.IsAnimating) {
-
-                if (supervisorio.FeasibleEvents(supervisorio.currentState, true).Contains(myPlan[0])) {
-                    if (!supervisorio.currentState.marked) {
-                        ProcessIntent(myPlan[0]);
-                        myPlan.RemoveAt(0);
-                    }
-
-
-
-                } else {
-                    PlanAction(10, 5);
-                }
-
-            }
-
-        }
-        
-
-    }
+    
 
     public void Initialize(string automaton, List<FSM.Event> previousEvents) {
 
@@ -115,9 +67,24 @@ public class TermiteFSMBrain : MonoBehaviour {
         supervisorio.RunEvents(previousEvents);
 
     }
+    void Update() {
 
 
-    // State Logic Functions
+        // Error handling
+        if (supervisorio == null) {
+            print("Error: supervisor not loaded yet");
+        }
+
+        if (isAuto) {
+            if (!supervisorio.currentState.marked) {
+                //UsePlanMode();
+                UseRandomMode();
+            }
+        }
+
+
+    }
+
     public void ProcessIntent(FSM.Event _event) {
         //print(Time.time +"- ID:" + id +"- From: " + position + " Called Intent: (" + _event + "), alone?: " + isAlone);
         //FSM.Event _event = supervisorio.eventsConteiner[eventID];
@@ -162,7 +129,43 @@ public class TermiteFSMBrain : MonoBehaviour {
 
     }
 
-    public void PlanAction(int steps = 5, int tries = 5) {
+
+    void UsePlanMode() {
+        if (myPlan.Count == 0) {
+            PlanAction(10, 5);
+        }
+
+        if (!communicationComponent.IsTransitioning && !animationComponent.IsAnimating) {
+
+            if (supervisorio.FeasibleEvents(supervisorio.currentState, true).Contains(myPlan[0])) {
+                
+                ProcessIntent(myPlan[0]);
+                myPlan.RemoveAt(0);
+
+
+            } else {
+                PlanAction(10, 5);
+            }
+
+        }
+    }
+
+
+    void UseRandomMode() {
+        if (!communicationComponent.IsTransitioning && !animationComponent.IsAnimating) {
+
+            List<FSM.Event> feasible = supervisorio.FeasibleEvents(supervisorio.currentState, true);
+
+            int rand = UnityEngine.Random.Range(0, feasible.Count);
+
+            ProcessIntent(feasible[rand]);
+
+        }
+    }
+
+
+    //AI functions
+    private void PlanAction(int steps = 5, int tries = 5) {
 
         List<FSM.Event> eventPlan = new List<FSM.Event>();
         int maxScore = -1;
@@ -203,7 +206,7 @@ public class TermiteFSMBrain : MonoBehaviour {
 
     }
 
-    int EvaluatePlan(List<FSM.Event> tryPlan, int posImportance) {
+    private int EvaluatePlan(List<FSM.Event> tryPlan, int posImportance) {
 
         int count = 0;
 
@@ -244,5 +247,11 @@ public class TermiteFSMBrain : MonoBehaviour {
         return count;
     }
 
+    /// <summary>
+    /// Update Bot coordinate position to match state
+    /// </summary>
+    public void UpdatePosition() {
+        position = supervisorio.currentState.GetPosition();
+    }
 
 }

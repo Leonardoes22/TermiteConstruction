@@ -6,28 +6,37 @@ public class TermiteCommunicationComponent : MonoBehaviour
 {
     // Termite Components
     public TermiteFSMBrain brain;
-    public TermiteInterfaceComponent interfaceComponent;
     public TermiteAnimationComponent animationComponent;
+    public TermiteInterfaceComponent interfaceComponent;
+    
 
     //External References
     public CentralController centralController;
-    
+
+
+    //States
     public bool isAlone { get { return centralController.botList.Count == 1; } }
-
-    // Transition
-    private FSM.Event _event;
-    private Coord reservedDest;
-    public List<FSM.Event> unknownEventsBuffer = new List<FSM.Event>();
-
     public bool IsTransitioning { get; set; } = false;
 
-    private void Update() {
-        AcknowledgeExternalEvents();
 
-    }
+    //Variables
+    public List<FSM.Event> unknownEventsBuffer = new List<FSM.Event>();
+
+    private FSM.Event _event;
+    private Coord reservedDest;
 
     public void Initialize(GameObject manager) {
         centralController = manager.GetComponent<CentralController>();
+    }
+
+    private void Update() {
+
+        if (!IsTransitioning && unknownEventsBuffer.Count > 0) {
+
+            AcknowledgeExternalEvents();
+            interfaceComponent.UpdateStateButtons();
+        }
+        
     }
 
     public void StartTransition(int eventID, Coord dest) {
@@ -36,63 +45,69 @@ public class TermiteCommunicationComponent : MonoBehaviour
 
         _event = brain.supervisorio.eventsConteiner[eventID];
 
+        // START TRANSITION
         reservedDest = dest;
-
         IsTransitioning = true;
 
+        // UPDATE STATE
+        // Moved update state to transition start to solve crashes
+        // but it generated anticipated tile bug with the HeightMapUp function
+        brain.supervisorio.TriggerEvent(_event); 
+        centralController.NotifyTransistionEnd(gameObject, _event);
 
-
+        // START ANIMATION
+        animationComponent.StartAnimation(eventID);
     }
 
     public void EndTransition() {
 
-        brain.supervisorio.TriggerEvent(_event); //TODO bugging
-        centralController.NotifyTransistionEnd(gameObject, _event);
+        AcknowledgeExternalEvents();
         IsTransitioning = false;
 
         interfaceComponent.UpdateStateButtons();
         animationComponent.FixPosition();
 
         centralController.HeightMapUp(brain.supervisorio.currentState.heightMap);
-        brain.position = brain.supervisorio.currentState.GetPosition();
+        brain.UpdatePosition();
+        
         
 
         //print(Time.time + "- Ended Transition");
 
     }
 
+    // Allows other bots intention to occur
     public bool Allow(Coord dest) {
 
-        if ((dest != brain.position && (dest != reservedDest || !IsTransitioning)) || dest == Coord.origin) {
-            //print("Allowed: " + dest + "mine" + brain.position);
+        if(brain.position == dest && dest != Coord.origin) {
+            return false;
+        } else if (IsTransitioning && reservedDest == dest) {
+            return false;
+        } else {
             return true;
-
         }
-        //print("Blocked: " + dest);
-        return false;
+
     }
 
-
+    // Start a transition if all other bots allow and the intended event is still possible
     public void CallIntent(int eventID, Coord destination) {
 
         if(centralController.RequestIntent(gameObject, destination)) {
 
-            StartTransition(eventID, destination);
-            animationComponent.StartAnimation(eventID);
+            if (brain.supervisorio.FeasibleEvents().Contains(brain.supervisorio.eventsConteiner[eventID])) {
+                StartTransition(eventID, destination);
+            }
 
         }
 
     }
 
+    // Triggers all external events that happened 
     public void AcknowledgeExternalEvents() {
 
-        if (unknownEventsBuffer.Count > 0) {
-
-            while (unknownEventsBuffer.Count > 0) {
-                brain.supervisorio.TriggerEvent(unknownEventsBuffer[0], true);
-                unknownEventsBuffer.RemoveAt(0);
-            }
-            interfaceComponent.UpdateStateButtons();
+        while (unknownEventsBuffer.Count > 0) {
+            brain.supervisorio.TriggerEvent(unknownEventsBuffer[0], true);
+            unknownEventsBuffer.RemoveAt(0);
         }
 
     }

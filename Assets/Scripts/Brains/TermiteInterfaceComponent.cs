@@ -7,8 +7,9 @@ public class TermiteInterfaceComponent : MonoBehaviour
 {
     // Termite Components
     public TermiteFSMBrain brain;
-    public TermiteCommunicationComponent communicationComponent;
     public TermiteAnimationComponent animationComponent;
+    public TermiteCommunicationComponent communicationComponent;
+    
 
     // External References
     public InterfaceFSM hmi;
@@ -96,7 +97,6 @@ public class TermiteInterfaceComponent : MonoBehaviour
     public void End() {
         hmi.endText.SetActive(true);
     }
-
     public void UpdateStateButtons() {
 
         if (selected) {
@@ -111,6 +111,7 @@ public class TermiteInterfaceComponent : MonoBehaviour
         }
 
     }
+
 
     //Communication Methods
     public void StateButtonListener(int id) {

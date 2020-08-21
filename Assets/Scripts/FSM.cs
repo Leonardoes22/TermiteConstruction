@@ -180,6 +180,9 @@ public class FSM
     }
 
     // Returns all feasible events
+    public List<Event> FeasibleEvents() {
+        return FeasibleEvents(currentState);
+    }
     public List<Event> FeasibleEvents(State s, bool local=false) {
 
         List<Event> feasible = new List<Event>();

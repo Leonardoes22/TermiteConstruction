@@ -2,13 +2,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class TermiteAnimationComponent : MonoBehaviour
 {
     // Termite Components
     public TermiteFSMBrain brain;
-    public TermiteInterfaceComponent interfaceComponent;
     public TermiteCommunicationComponent communicationComponent;
+    public TermiteInterfaceComponent interfaceComponent;
+    
 
     // External References
     public TermiteTS tileSystem;
@@ -69,6 +71,11 @@ public class TermiteAnimationComponent : MonoBehaviour
      */
 
 
+    public void Initialize(GameObject manager) {
+        tileSystem = manager.GetComponent<TermiteTS>();
+        isPlacing = false; //fix starting with isPlacing == true;
+    }
+
     void Update() {
 
         if (IsAnimating) {
@@ -76,10 +83,7 @@ public class TermiteAnimationComponent : MonoBehaviour
         }
     }
 
-    public void Initialize(GameObject manager) {
-        tileSystem = manager.GetComponent<TermiteTS>();
-        isPlacing = false; //fix starting with isPlacing == true;
-    }
+    
 
     // Fix the bot position to prevent animation errors spreading
     public void FixPosition() {
@@ -176,8 +180,11 @@ public class TermiteAnimationComponent : MonoBehaviour
 
     }
 
+
+    //Internal Animation Commands
+
     // Live Animation function
-    public void Animate() {
+    private void Animate() {
 
         //Animation Logic
         if (!IsAnimatingStep) {
@@ -217,20 +224,20 @@ public class TermiteAnimationComponent : MonoBehaviour
 
 
     // Animation commands
-    public void GrabTile() {
+    private void GrabTile() {
 
         myTileTransform.gameObject.GetComponent<MeshRenderer>().enabled = true; //Show tile
         isGrabbing = true; //Start grabbing
 
         if (debugMode) { print("Command: GrabTile"); }
     }
-    public void PlaceTile() {
+    private void PlaceTile() {
 
         isPlacing = true; //Start placing
 
         if (debugMode) { print("Command: PlaceTile"); }
     }
-    public void TurnRight() {
+    private void TurnRight() {
 
         nextDirection = currentDirection - 1 >= 0 ? (currentDirection - 1) % 4 : 3; // Calculate to the right compass direction
         isTurning = 1;
@@ -238,14 +245,14 @@ public class TermiteAnimationComponent : MonoBehaviour
         if (debugMode) { print("Command: TurnRight"); }
 
     }
-    public void TurnLeft() {
+    private void TurnLeft() {
 
         nextDirection = (currentDirection + 1) % 4; // Calculate to the left compass direction
         isTurning = -1;
         
         if (debugMode) { print("Command: TurnLeft"); }
     }
-    public void TurnTo(int destiny) {
+    private void TurnTo(int destiny) {
 
         if (destiny != currentDirection) {
 
@@ -267,10 +274,10 @@ public class TermiteAnimationComponent : MonoBehaviour
         
 
     }
-    public void GoFoward() {
+    private void GoFoward() {
 
        
-        initialPos = tileSystem.centreMap[brain.supervisorio.currentState.GetPosition()]; //Get initial walking position to calculate walking distance
+        initialPos = tileSystem.centreMap[brain.position]; //Get initial walking position to calculate walking distance
 
         isMovingFoward = true;
 
@@ -280,7 +287,7 @@ public class TermiteAnimationComponent : MonoBehaviour
 
 
     // Animate grabbing tile
-    void AnimateGrab() {
+    private void AnimateGrab() {
 
         if (!fastMode) {
             grabberTransform.Rotate(new Vector3(0, 0, grabSpeed * Time.deltaTime)); // If not in fast mode rotate grabber untill limit
@@ -299,7 +306,7 @@ public class TermiteAnimationComponent : MonoBehaviour
         }
 
     }
-    void AnimatePlacing() {
+    private void AnimatePlacing() {
 
         if (!fastMode) {
             grabberTransform.Rotate(new Vector3(0, 0, -grabSpeed * Time.deltaTime)); // If not in fast mode rotate grabber untill limit
@@ -318,7 +325,7 @@ public class TermiteAnimationComponent : MonoBehaviour
 
         }
     }
-    void AnimateTurning() {
+    private void AnimateTurning() {
 
         //brain.manager.GetComponent<InterfaceFSM>().debug.GetComponent<Text>().text = Time.time + "-- gira gira ";
 
@@ -348,7 +355,7 @@ public class TermiteAnimationComponent : MonoBehaviour
 
 
     }
-    void AnimateFoward() {
+    private void AnimateFoward() {
         // OBS. Not currently fixing animation, may bug 
 
 
