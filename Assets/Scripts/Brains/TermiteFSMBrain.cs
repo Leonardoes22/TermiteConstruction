@@ -38,7 +38,8 @@ public class TermiteFSMBrain : MonoBehaviour {
 
 
     //States
-    public bool isAuto = false; 
+    public bool isAuto = false;
+    public float wait;
 
     //Temp variable
     public bool isAlone { get { return communicationComponent.isAlone; } }
@@ -75,10 +76,12 @@ public class TermiteFSMBrain : MonoBehaviour {
             print("Error: supervisor not loaded yet");
         }
 
-        if (isAuto) {
+        wait = Mathf.Max(wait - Time.deltaTime, 0);
+        print(wait);
+        if (isAuto && wait<=0) {
             if (!supervisorio.currentState.marked) {
-                //UsePlanMode();
-                UseRandomMode();
+                UsePlanMode();
+                //UseRandomMode();
             }
         }
 
@@ -129,12 +132,13 @@ public class TermiteFSMBrain : MonoBehaviour {
 
     }
 
-
+    //AI functions
     void UsePlanMode() {
         if (myPlan.Count == 0) {
             PlanAction(10, 5);
+            
         }
-
+        
         if (!communicationComponent.IsTransitioning && !animationComponent.IsAnimating) {
 
             if (supervisorio.FeasibleEvents(supervisorio.currentState, true).Contains(myPlan[0])) {
@@ -144,27 +148,32 @@ public class TermiteFSMBrain : MonoBehaviour {
 
 
             } else {
-                PlanAction(10, 5);
+                ProcessIntent(ChoseAtRandom());
+                myPlan.RemoveAt(0);
+                //PlanAction();
             }
 
         }
+        
     }
 
 
     void UseRandomMode() {
         if (!communicationComponent.IsTransitioning && !animationComponent.IsAnimating) {
 
-            List<FSM.Event> feasible = supervisorio.FeasibleEvents(supervisorio.currentState, true);
-
-            int rand = UnityEngine.Random.Range(0, feasible.Count);
-
-            ProcessIntent(feasible[rand]);
-
+            
+            ProcessIntent(ChoseAtRandom());
         }
     }
 
+    FSM.Event ChoseAtRandom() {
+        List<FSM.Event> feasible = supervisorio.FeasibleEvents(supervisorio.currentState, true);
 
-    //AI functions
+        int rand = UnityEngine.Random.Range(0, feasible.Count);
+
+        return feasible[rand];
+    }
+    
     private void PlanAction(int steps = 5, int tries = 5) {
 
         List<FSM.Event> eventPlan = new List<FSM.Event>();
@@ -247,11 +256,14 @@ public class TermiteFSMBrain : MonoBehaviour {
         return count;
     }
 
-    /// <summary>
-    /// Update Bot coordinate position to match state
-    /// </summary>
+
+    //Update Bot coordinate position to match state
     public void UpdatePosition() {
         position = supervisorio.currentState.GetPosition();
+    }
+
+    public void ActionDenied() {
+        wait = 0.5f;
     }
 
 }

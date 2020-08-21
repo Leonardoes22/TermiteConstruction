@@ -98,11 +98,16 @@ public class TermiteCommunicationComponent : MonoBehaviour
                 StartTransition(eventID, destination);
             }
 
+        } else {
+            brain.ActionDenied();
         }
 
     }
 
-    // Triggers all external events that happened 
+    //  
+    /// <summary>
+    /// Triggers all external events that happened
+    /// </summary>
     public void AcknowledgeExternalEvents() {
 
         while (unknownEventsBuffer.Count > 0) {
