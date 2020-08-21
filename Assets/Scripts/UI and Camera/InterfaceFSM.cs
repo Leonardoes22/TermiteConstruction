@@ -68,7 +68,7 @@ public class InterfaceFSM : MonoBehaviour {
             string eventLabel = e.label;
 
             btn.GetComponentInChildren<Text>().text = eventLabel;
-            btn.GetComponent<Button>().onClick.AddListener(() => selectedBotBrain.hmiHandler.StateButtonListener(eventId));
+            btn.GetComponent<Button>().onClick.AddListener(() => selectedBotBrain.interfaceComponent.StateButtonListener(eventId));
 
         }
 
@@ -130,7 +130,7 @@ public class InterfaceFSM : MonoBehaviour {
     // Button Listeners ----
     void AutoToggleListener(bool autoToggleState) {
 
-        selectedBotBrain.hmiHandler.AutoToggleListener(autoToggleState);
+        selectedBotBrain.interfaceComponent.AutoToggleListener(autoToggleState);
 
         DestroyStateButtons();
         if (!autoToggleState) {

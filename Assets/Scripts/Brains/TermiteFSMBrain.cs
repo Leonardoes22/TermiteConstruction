@@ -17,9 +17,9 @@ using UnityEngine.UIElements;
 public class TermiteFSMBrain : MonoBehaviour {
 
     // Termite Components
-    public TermiteCommunicationComponent transitionHandler;
-    public TermiteInterfaceComponent hmiHandler;
-    public TermiteAnimationComponent animationHandler;
+    public TermiteCommunicationComponent communicationComponent;
+    public TermiteInterfaceComponent interfaceComponent;
+    public TermiteAnimationComponent animationComponent;
 
     // External References
     public GameObject manager;
@@ -40,7 +40,7 @@ public class TermiteFSMBrain : MonoBehaviour {
     public bool isAuto = false; 
 
     //Temp variable
-    public bool isAlone { get { return transitionHandler.isAlone; } }
+    public bool isAlone { get { return communicationComponent.isAlone; } }
 
     void Update() {
 
@@ -49,9 +49,9 @@ public class TermiteFSMBrain : MonoBehaviour {
         if (supervisorio == null) {
             print("Error: supervisor not loaded yet");
         }
-        
+        /*
         if (isAuto) {
-            if (!transitionHandler.IsTransitioning && !animationHandler.IsAnimating) {
+            if (!communicationComponent.IsTransitioning && !animationComponent.IsAnimating) {
 
                 List<FSM.Event> feasible = supervisorio.FeasibleEvents(supervisorio.currentState, true);
 
@@ -61,8 +61,8 @@ public class TermiteFSMBrain : MonoBehaviour {
 
             }
         }
-
-        /*
+        */
+        
         if (isAuto) {
 
             if (myPlan.Count == 0) {
@@ -72,7 +72,7 @@ public class TermiteFSMBrain : MonoBehaviour {
                 }
             }
 
-            if (!transitionHandler.IsTransitioning && !animationHandler.IsAnimating) {
+            if (!communicationComponent.IsTransitioning && !animationComponent.IsAnimating) {
 
                 if (supervisorio.FeasibleEvents(supervisorio.currentState, true).Contains(myPlan[0])) {
                     if (!supervisorio.currentState.marked) {
@@ -89,7 +89,7 @@ public class TermiteFSMBrain : MonoBehaviour {
             }
 
         }
-        */
+        
 
     }
 
@@ -105,12 +105,12 @@ public class TermiteFSMBrain : MonoBehaviour {
         position = supervisorio.currentState.GetPosition();
 
         // Instantiate Handlers
-        animationHandler.Initialize(manager);
-        hmiHandler.Initialize(manager);
-        transitionHandler.Initialize(manager);
+        animationComponent.Initialize(manager);
+        interfaceComponent.Initialize(manager);
+        communicationComponent.Initialize(manager);
 
         // Set initial position
-        animationHandler.FixPosition();
+        animationComponent.FixPosition();
 
         supervisorio.RunEvents(previousEvents);
 
@@ -156,7 +156,7 @@ public class TermiteFSMBrain : MonoBehaviour {
 
         }
 
-        transitionHandler.CallIntent(_event.id, dest);
+        communicationComponent.CallIntent(_event.id, dest);
 
 
 

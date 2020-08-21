@@ -90,7 +90,7 @@ public class CentralController : MonoBehaviour
         foreach (var bot in botList) {
 
             if (bot != source) {
-                if (!bot.GetComponent<TermiteFSMBrain>().transitionHandler.Allow(dest)) {
+                if (!bot.GetComponent<TermiteFSMBrain>().communicationComponent.Allow(dest)) {
                     permission = false;
                 }
             }

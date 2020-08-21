@@ -54,9 +54,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9a56ac93ea0e67408179a821e5f4024, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  transitionHandler: {fileID: 8506175343740053712}
-  hmiHandler: {fileID: 5503709825864216733}
-  animationHandler: {fileID: 1100389558484057332}
+  communicationComponent: {fileID: 8506175343740053712}
+  interfaceComponent: {fileID: 5503709825864216733}
+  animationComponent: {fileID: 1100389558484057332}
   manager: {fileID: 0}
   centralController: {fileID: 0}
   id: 0
