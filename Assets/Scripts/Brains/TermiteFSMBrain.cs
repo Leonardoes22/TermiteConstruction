@@ -77,7 +77,7 @@ public class TermiteFSMBrain : MonoBehaviour {
         }
 
         wait = Mathf.Max(wait - Time.deltaTime, 0);
-        print(wait);
+
         if (isAuto && wait<=0) {
             if (!supervisorio.currentState.marked) {
                 UsePlanMode();

@@ -58,6 +58,7 @@ public class TermiteAnimationComponent : MonoBehaviour
     }
 
     // Animation Variables
+    float forwardTimeElapsed;
     Vector3 initialPos;
     int nextDirection;
     public int currentDirection = 3;
@@ -282,6 +283,7 @@ public class TermiteAnimationComponent : MonoBehaviour
 
        
         initialPos = tileSystem.centreMap[brain.position]; //Get initial walking position to calculate walking distance
+        forwardTimeElapsed = 0f;
 
         isMovingFoward = true;
 
@@ -363,7 +365,17 @@ public class TermiteAnimationComponent : MonoBehaviour
         // OBS. Not currently fixing animation, may bug 
 
 
+        forwardTimeElapsed += Time.deltaTime;
+        float initialHeight = tileSystem.heightMap[brain.position];
+        float finalHeight = tileSystem.heightMap[communicationComponent.reservedDest];
+        float heightDiff = finalHeight - initialHeight;
+
+
+
+
         if (!fastMode) {
+
+            transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, Mathf.Lerp(heightDiff * 15, 0, forwardTimeElapsed/0.6f));
 
             for (int i = 0; i < 4; i++) {
                 whegsTransform[i].Rotate(new Vector3(0, 0, -whegSpeed * Time.deltaTime)); //Turn whegs
@@ -372,15 +384,18 @@ public class TermiteAnimationComponent : MonoBehaviour
             coreTransform.Translate(new Vector3(fowardSpeed * Time.deltaTime, 0, 0)); // Move body
 
         } else {
+
             coreTransform.Translate(new Vector3(27.5f, 0, 0)); // Teleport body
         }
 
 
 
-        if (Vector3.Distance(coreTransform.position, initialPos) > 27.5f) {
+        if (Vector3.Distance(coreTransform.position, initialPos) > 27.5f + (Mathf.Abs(heightDiff) * 2)) {
 
 
             //If far enought from initial position: end animation
+
+            transform.eulerAngles = new Vector3(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, 0);
 
             isMovingFoward = false;
 

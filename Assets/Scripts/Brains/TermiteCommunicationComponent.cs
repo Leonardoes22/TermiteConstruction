@@ -23,7 +23,7 @@ public class TermiteCommunicationComponent : MonoBehaviour
     public List<FSM.Event> unknownEventsBuffer = new List<FSM.Event>();
 
     private FSM.Event _event;
-    private Coord reservedDest;
+    public Coord reservedDest;
 
     public void Initialize(GameObject manager) {
         centralController = manager.GetComponent<CentralController>();
