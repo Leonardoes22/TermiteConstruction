@@ -93,8 +93,12 @@ public class TermiteAnimationComponent : MonoBehaviour
             // If robot in grid place in correct grid position and height
 
             Coord gridPos = brain.supervisorio.currentState.GetPosition();
+            int pileHeight = tileSystem.heightMap[gridPos];
+            float height = 4f;
+            if (pileHeight > 0) {
+                height += pileHeight * tileSystem.tile.Size.y - 1.75f; // Get tile pile height, reduce to walkable height, add bot center of mass height
+            } 
 
-            float height = tileSystem.heightMap[gridPos] * tileSystem.tile.Size.y - 1.75f + 4f; // Get tile pile height, reduce to walkable height, add bot center of mass height
 
             coreTransform.position = tileSystem.centreMap[gridPos] + new Vector3(0, height, 0); 
 
