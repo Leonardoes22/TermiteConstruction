@@ -49,11 +49,7 @@ public class TermiteCommunicationComponent : MonoBehaviour
         reservedDest = dest;
         IsTransitioning = true;
 
-        // UPDATE STATE
-        // Moved update state to transition start to solve crashes
-        // but it generated anticipated tile bug with the HeightMapUp function
-        brain.supervisorio.TriggerEvent(_event); 
-        centralController.NotifyTransistionEnd(gameObject, _event);
+        
 
         // START ANIMATION
         animationComponent.StartAnimation(eventID);
@@ -62,6 +58,12 @@ public class TermiteCommunicationComponent : MonoBehaviour
     public void EndTransition() {
 
         AcknowledgeExternalEvents();
+
+        // UPDATE STATE
+        // Moved update state to transition start to solve crashes
+        // but it generated anticipated tile bug with the HeightMapUp function
+        brain.supervisorio.TriggerEvent(_event);
+        centralController.NotifyTransistionEnd(gameObject, _event);
         IsTransitioning = false;
 
         interfaceComponent.UpdateStateButtons();
