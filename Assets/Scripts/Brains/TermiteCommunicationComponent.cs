@@ -79,7 +79,29 @@ public class TermiteCommunicationComponent : MonoBehaviour
     }
 
     // Allows other bots intention to occur
-    public bool Allow(Coord dest) {
+    public bool Allow(Coord dest, FSM.Event _event) {
+
+        
+
+        
+        // If is an external event, check if it is feasible
+        if(brain.supervisorio.AltEvent(_event) != null) {
+
+            bool feasible = false;
+
+            foreach (var e in brain.supervisorio.FeasibleEvents()) {
+                if (e.id == brain.supervisorio.AltEvent(_event).id) {
+                    feasible = true;
+                }
+            }
+
+            if (!feasible) {
+                return false;
+            }
+
+        }
+
+        
 
         if(brain.position == dest && dest != Coord.origin) {
             return false;
@@ -94,9 +116,12 @@ public class TermiteCommunicationComponent : MonoBehaviour
     // Start a transition if all other bots allow and the intended event is still possible
     public void CallIntent(int eventID, Coord destination) {
 
-        if(centralController.RequestIntent(gameObject, destination)) {
+        FSM.Event _event = brain.supervisorio.eventsConteiner[eventID];
 
-            if (brain.supervisorio.FeasibleEvents().Contains(brain.supervisorio.eventsConteiner[eventID])) {
+
+        if (centralController.RequestIntent(gameObject, destination, _event)) {
+
+            if (brain.supervisorio.FeasibleEvents().Contains(_event)) {
                 StartTransition(eventID, destination);
             }
 

@@ -6,6 +6,7 @@ using System.Net.Http.Headers;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Security.Cryptography;
+using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.Assertions.Must;
 using UnityEngine.Audio;
@@ -91,6 +92,10 @@ public class TermiteFSMBrain : MonoBehaviour {
     public void ProcessIntent(FSM.Event _event) {
         //print(Time.time +"- ID:" + id +"- From: " + position + " Called Intent: (" + _event + "), alone?: " + isAlone);
         //FSM.Event _event = supervisorio.eventsConteiner[eventID];
+        if(_event == null) {
+            return;
+        }
+
         Coord dest = position;
         
         switch (_event.type) {
@@ -139,16 +144,20 @@ public class TermiteFSMBrain : MonoBehaviour {
             
         }
         
-        if (!communicationComponent.IsTransitioning && !animationComponent.IsAnimating) {
+        if (!communicationComponent.IsTransitioning && !animationComponent.IsAnimating && myPlan.Count> 0 ) {
 
-            if (supervisorio.FeasibleEvents(supervisorio.currentState, true).Contains(myPlan[0])) {
+            if (supervisorio.FeasibleEvents(supervisorio.currentState, true).Contains(myPlan[0]) ) {
                 
                 ProcessIntent(myPlan[0]);
                 myPlan.RemoveAt(0);
 
 
             } else {
+
+                
                 ProcessIntent(ChoseAtRandom());
+                
+                
                 myPlan.RemoveAt(0);
                 //PlanAction();
             }
@@ -169,9 +178,15 @@ public class TermiteFSMBrain : MonoBehaviour {
     FSM.Event ChoseAtRandom() {
         List<FSM.Event> feasible = supervisorio.FeasibleEvents(supervisorio.currentState, true);
 
-        int rand = UnityEngine.Random.Range(0, feasible.Count);
+        if (feasible.Count > 0) {
+            int rand = UnityEngine.Random.Range(0, feasible.Count);
 
-        return feasible[rand];
+            return feasible[rand];
+        } else {
+            return null;
+        }
+
+        
     }
     
     private void PlanAction(int steps = 5, int tries = 5) {
@@ -263,7 +278,7 @@ public class TermiteFSMBrain : MonoBehaviour {
     }
 
     public void ActionDenied() {
-        wait = 0.5f;
+        wait =  manager.GetComponent<SimManager>().isFastAnim ? 0.5f : 0f ;
     }
 
 }

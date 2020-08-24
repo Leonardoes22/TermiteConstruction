@@ -83,14 +83,14 @@ public class CentralController : MonoBehaviour
 
 
     // MultiBot (TermiteFSM) Functions
-    public bool RequestIntent(GameObject source, Coord dest) {
+    public bool RequestIntent(GameObject source, Coord dest, FSM.Event _event) {
 
         bool permission = true;
 
         foreach (var bot in botList) {
 
             if (bot != source) {
-                if (!bot.GetComponent<TermiteFSMBrain>().communicationComponent.Allow(dest)) {
+                if (!bot.GetComponent<TermiteFSMBrain>().communicationComponent.Allow(dest, _event)) {
                     permission = false;
                 }
             }

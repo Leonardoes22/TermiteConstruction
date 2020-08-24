@@ -55,8 +55,9 @@ public class InterfaceFSM : MonoBehaviour {
 
         int stateId = selectedBotBrain.supervisorio.currentState.id; 
         int countBtn = 0;
+        List<FSM.Event> feasibleEvents = selectedBotBrain.supervisorio.FeasibleEvents(selectedBotBrain.supervisorio.currentState, true);
 
-        foreach (var e in selectedBotBrain.supervisorio.FeasibleEvents(selectedBotBrain.supervisorio.currentState, true)) {
+        foreach (var e in feasibleEvents) {
 
             countBtn++;
 
@@ -71,6 +72,29 @@ public class InterfaceFSM : MonoBehaviour {
             btn.GetComponent<Button>().onClick.AddListener(() => selectedBotBrain.interfaceComponent.StateButtonListener(eventId));
 
         }
+
+        // Temp code for debug feasible external events
+        countBtn++;
+        countBtn++;
+        foreach (var e in selectedBotBrain.supervisorio.FeasibleEvents(selectedBotBrain.supervisorio.currentState)) {
+
+            
+
+            if (!feasibleEvents.Contains(e)) {
+                countBtn++;
+                GameObject externalEventLabel = (GameObject)Instantiate(Resources.Load("Text"), new Vector3(860, 540 - countBtn * 30, 0), Quaternion.identity);
+                externalEventLabel.transform.SetParent(canvas.transform, false);
+
+                externalEventLabel.GetComponent<Text>().text = e.label;
+                externalEventLabel.GetComponent<Text>().fontSize = 20;
+                externalEventLabel.GetComponent<Text>().color = Color.blue;
+                externalEventLabel.GetComponent<Text>().alignment = TextAnchor.UpperRight;
+                externalEventLabel.tag = "StateButton";
+            }
+
+
+        }
+
 
     }
     
