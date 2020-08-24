@@ -260,8 +260,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a245a6be6d779a04c9bff0a992e51c46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  centerObject: {fileID: 0}
-  active: 0
 --- !u!20 &404950059
 Camera:
   m_ObjectHideFlags: 0

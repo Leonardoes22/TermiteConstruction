@@ -63,6 +63,7 @@ public class FSM
 
         // Pega o caminho do arquivo
         var supervisorsfolder = Directory.GetCurrentDirectory() + "\\Assets\\Resources\\Supervisors\\";
+        
         var supPath = supervisorsfolder + file;
 
         
@@ -179,6 +180,9 @@ public class FSM
     }
 
     // Returns all feasible events
+    public List<Event> FeasibleEvents() {
+        return FeasibleEvents(currentState);
+    }
     public List<Event> FeasibleEvents(State s, bool local=false) {
 
         List<Event> feasible = new List<Event>();
@@ -196,6 +200,12 @@ public class FSM
         }
 
         return feasible;
+    }
+
+    public void RunEvents(List<Event> eventList) {
+        for (int i = 0; i < eventList.Count; i++) {
+            TriggerEvent(eventList[i], true);
+        }
     }
 
    
@@ -226,6 +236,10 @@ public class FSM
                     if (label == movIO) {
                         return "typeMovementIO";
                     }
+                }
+
+                if(label.Length >= 2 && label.Substring(0,2) == "in") {
+                    return "typeMovementIO";
                 }
 
                 if (label == typeGet) {
