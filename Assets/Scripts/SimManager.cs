@@ -20,8 +20,10 @@ public class SimManager : MonoBehaviour {
 
     //Scenario Parameters
     public string supervisorName;
-    public bool isMultibot;
-    Coord size;
+    public bool isMultibot { get { return structurePlant.isMultiBot; } }
+    Coord size { get { return structurePlant.shape; } }
+
+    public StructurePlant structurePlant; 
 
     void Start() {
 
@@ -35,6 +37,7 @@ public class SimManager : MonoBehaviour {
 
         //Initialize InterfaceFSM
         interfaceFSM.Initialize();
+
     }
 
     //Load the Simulation for one supervisor
@@ -52,11 +55,8 @@ public class SimManager : MonoBehaviour {
         }
 
 
-        // Setup Scenario Parameters
-        FSM fsm = new FSM(supervisorName);
-        isMultibot = fsm.isMultiBot;
-        size = fsm.size;
-
+        // Setup Scenario StructurePlant
+        structurePlant = new StructurePlant(supervisorName);
 
         Destroy(sceneInfo);
 

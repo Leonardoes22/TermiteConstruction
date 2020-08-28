@@ -18,13 +18,10 @@ public class InterfaceMenu : MonoBehaviour {
 
     public bool fullScreen;
 
+    Dictionary<string, StructurePlant> structurePlantList = new Dictionary<string, StructurePlant>();
+
     // Start is called before the first frame update
     void Start() {
-
-        //ShowDisplay();
-
-        
-
 
 
         //Config MenuSelection Canvas
@@ -72,8 +69,15 @@ public class InterfaceMenu : MonoBehaviour {
             
         }
 
+        
+
         int btnCount = 1;
         foreach (string supPath in supPaths) {
+
+            StructurePlant plantCaster = new StructurePlant(supPath.Split('\\')[supPath.Split('\\').Length - 1]);
+
+            structurePlantList[supPath.Split('\\')[supPath.Split('\\').Length - 1]] = plantCaster;
+
 
             GameObject btn = CreateButton(new Vector3(0, -30 * btnCount, 0));
             SetButtonText(btn, supPath.Split('\\')[supPath.Split('\\').Length - 1]);
@@ -88,9 +92,7 @@ public class InterfaceMenu : MonoBehaviour {
         selectedBtn = btn;
         DestroyDisplay();
 
-        FSM selectedSupervisor = new FSM(selectedBtn.GetComponentInChildren<Text>().text);
-
-        ShowDisplay(selectedSupervisor);
+        ShowDisplay(structurePlantList[selectedBtn.GetComponentInChildren<Text>().text]);
     }
 
     void StartClicked() {
@@ -120,13 +122,12 @@ public class InterfaceMenu : MonoBehaviour {
         SceneManager.LoadScene("TileSystem_Reform");
     }
 
-    void ShowDisplay(FSM supervisorio) {
+    void ShowDisplay(StructurePlant supervisorio) {
 
-        Coord tempCoord = supervisorio.size;
 
         //Init TileSystem
-        transform.GetComponent<TermiteTS>().Initialize(tempCoord.x, tempCoord.y, "TermiteTile");
-        HeightMap final = supervisorio.FinalStruct;
+        transform.GetComponent<TermiteTS>().Initialize(supervisorio.shape.x, supervisorio.shape.y, "TermiteTile");
+        HeightMap final = supervisorio.finalStructure;
         
         transform.GetComponent<TermiteTS>().UpdateMap(final);
         //Handle Display Camera

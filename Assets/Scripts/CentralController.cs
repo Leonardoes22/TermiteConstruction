@@ -56,7 +56,7 @@ public class CentralController : MonoBehaviour
 
         //Initialize Termite Brain
         newBotBrain.manager = this.gameObject;
-        newBotBrain.Initialize(simManager.supervisorName, externalEvents);
+        newBotBrain.Initialize(simManager.structurePlant.supList[0], externalEvents);
 
 
         //Add to botList

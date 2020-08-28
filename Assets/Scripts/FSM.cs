@@ -16,116 +16,15 @@ public class FSM
     public State currentState; // Estado atual
     public Coord size;
 
-    public HeightMap FinalStruct {
+    public FSM(Supervisor sup) {
 
-        get {
-            foreach (var state in statesConteiner.Values) {
-                if (state.marked == true) {
-                    return state.heightMap;
-                }
-            }
-            return null;
-        }
-    }
+        eventsConteiner = sup.eventsContainer;
+        statesConteiner = sup.statesContainer;
+        transitionList = sup.transitionsList;
 
-    public bool isMultiBot {
-
-        get {
-
-            int count = 0;
-            int countAlt = 0;
-
-            foreach (var e in eventsConteiner.Values) {
-
-                if(e.label[0] == 'a') {
-                    if (e.label.EndsWith("_r2")) {
-                        countAlt++;
-                    } else {
-                        count++;
-                    }
-                }
-
-            }
-            return count == countAlt;
-        }
+        currentState = sup.initialState;
 
     }
-
-    // Start is called before the first frame update
-    public FSM(string automaton)
-    {
-        LoadSupervisor(automaton);
-    }
-
-    // External Utilities Methods -------------
-    // Carrega arquivo xml com supervisor e gera Estados, Eventos e Transições 
-    void LoadSupervisor(string file) {
-
-        // Pega o caminho do arquivo
-        var supervisorsfolder = Directory.GetCurrentDirectory() + "\\Assets\\Resources\\Supervisors\\";
-        
-        var supPath = supervisorsfolder + file;
-
-        
-
-        //Nó (automata)
-        XElement supervisor = XElement.Load(supPath);
-
-        //Obter forma do grid
-        string name = (string)supervisor.Element("Automaton").Attribute("name"); // Nome do Automaton
-        string[] parse = name.Split(new string[] { "||" }, StringSplitOptions.None); // Parser
-
-        size.x = int.Parse(parse[parse.Length - 2]);
-        size.y = int.Parse(parse[parse.Length - 1]);
-
-
-        //Carregar informações
-        IEnumerable events = supervisor.Descendants("Event"); // Enumerável de eventos
-        IEnumerable states = supervisor.Descendants("State"); // Enumerável de estados
-        IEnumerable transitions = supervisor.Descendants("Transition"); // Enumerável de transições
-
-        //Carrega o dicionário de eventos
-        foreach (XElement eventData in events) {
-
-            int eventId = (int) eventData.Attribute("id");
-            string eventLabel = (string) eventData.Attribute("label");
-
-            Event eventCaster = new Event(eventId, eventLabel);
-            eventsConteiner.Add(eventId, eventCaster);
-        }
-
-        //Carrega o dicionário de estados
-        foreach (XElement stateData in states) {
-
-            int stateId = (int)stateData.Attribute("id");
-            string stateName = (string)stateData.Attribute("name");
-
-            State stateCaster = new State(stateId, stateName, size);
-            if ((string)stateData.Attribute("accepting") == "true") {
-                stateCaster.marked = true;
-            }
-
-            if((string)stateData.Attribute("initial") == "true") {
-                currentState = stateCaster;
-            }
-
-            statesConteiner.Add(stateId, stateCaster);
-        }
-
-        //Carrega a lista de transições
-        foreach (XElement transitionData in transitions) {
-
-            int dest = (int) transitionData.Attribute("dest");
-            int evento = (int) transitionData.Attribute("event");
-            int source = (int) transitionData.Attribute("source");
-
-            Transition transitionCaster = new Transition(dest, evento, source);
-            transitionList.Add(transitionCaster);
-        }
-
-
-    }
-
 
 
     // Internal Utilities Methods -------------------

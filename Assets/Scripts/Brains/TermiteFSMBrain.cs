@@ -6,7 +6,7 @@ using System.Net.Http.Headers;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Security.Cryptography;
-using UnityEditorInternal;
+//using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.Assertions.Must;
 using UnityEngine.Audio;
@@ -47,13 +47,14 @@ public class TermiteFSMBrain : MonoBehaviour {
 
     
 
-    public void Initialize(string automaton, List<FSM.Event> previousEvents) {
+    public void Initialize(Supervisor sup, List<FSM.Event> previousEvents) {
 
         // Set central controller
         centralController = manager.GetComponent<CentralController>();
 
         // Instantiate supervisor
-        supervisorio = new FSM(automaton);
+        //supervisorio = new FSM(automaton);
+        supervisorio = new FSM(sup);
 
         // Get initial gridosition - normally (0,0)
         position = supervisorio.currentState.GetPosition();
@@ -155,11 +156,9 @@ public class TermiteFSMBrain : MonoBehaviour {
             } else {
 
                 
-                ProcessIntent(ChoseAtRandom());
-                
-                
-                myPlan.RemoveAt(0);
-                //PlanAction();
+                //ProcessIntent(ChoseAtRandom());
+                //myPlan.RemoveAt(0);
+                PlanAction();
             }
 
         }
