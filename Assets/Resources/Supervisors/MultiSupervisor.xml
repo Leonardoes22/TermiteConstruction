@@ -121,7 +121,6 @@
     </Events>
     <States>
       <State id="0" initial="true" name="q0.S0.0.0.0.0"/>
-      <State id="1" name="q0.S1.0.0.0.0"/>
       <State id="2" name="q1.S0.1.1.1.1"/>
       <State id="3" name="q1.S0.1.2.1.1"/>
       <State id="4" name="q1.S1.1.1.1.1"/>
@@ -146,7 +145,6 @@
       <State id="23" name="q7.S1.1.2.1.0"/>
     </States>
     <Transitions>
-      <Transition dest="1" event="2" source="0"/>
       <Transition dest="8" event="3" source="0"/>
       <Transition dest="6" event="1" source="1"/>
       <Transition dest="10" event="3" source="1"/>

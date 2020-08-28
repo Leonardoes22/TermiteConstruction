@@ -88,6 +88,8 @@ public class InterfaceMenu : MonoBehaviour {
 
     }
 
+
+
     void SelectionClicked(GameObject btn) {
         selectedBtn = btn;
         DestroyDisplay();
@@ -104,8 +106,11 @@ public class InterfaceMenu : MonoBehaviour {
     }
 
     void DisplayHandler() {
+
         if(selectedBtn != null) {
-            placeHolder.GetComponent<Text>().text = selectedBtn.GetComponentInChildren<Text>().text;
+            string sups = "Supervisors: " + structurePlantList[selectedBtn.GetComponentInChildren<Text>().text].supList.Count;
+
+            placeHolder.GetComponent<Text>().text = sups;
         }
 
     }

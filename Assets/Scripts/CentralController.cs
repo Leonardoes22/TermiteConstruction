@@ -45,6 +45,12 @@ public class CentralController : MonoBehaviour
     //Add bot to simulation
     public TermiteFSMBrain SpawnBot() {
 
+        return SpawnBot(0);
+
+    }
+
+    public TermiteFSMBrain SpawnBot(int index) {
+
         
         //Instantiate the bot
         GameObject newBot = (GameObject)Instantiate(Resources.Load("TermiteBotWithTile"));
@@ -56,7 +62,7 @@ public class CentralController : MonoBehaviour
 
         //Initialize Termite Brain
         newBotBrain.manager = this.gameObject;
-        newBotBrain.Initialize(simManager.structurePlant.supList[0], externalEvents);
+        newBotBrain.Initialize(simManager.structurePlant.supList[index], externalEvents);
 
 
         //Add to botList
