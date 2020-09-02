@@ -137,12 +137,6 @@ public class InterfaceFSM : MonoBehaviour {
             addBotButton.SetActive(true);
             //addBotButton.GetComponentInChildren<Button>().onClick.AddListener(() => gameObject.GetComponent<CentralController>().SpawnBot());
             addBotButton.GetComponentInChildren<Button>().onClick.AddListener(() => AddBotListener());
-
-            //Spawn Bot Button
-            spawnBotButton.GetComponentInChildren<Button>().onClick.AddListener(() => SpawnBotListener());
-
-            //Supervisor Selector Dropdown
-            supervisorDropdown.GetComponent<Dropdown>().onValueChanged.AddListener( delegate { SupervisorDropdownChanged(); });
         }
 
     }
@@ -188,53 +182,11 @@ public class InterfaceFSM : MonoBehaviour {
 
     void AddBotListener() {
 
-
-        spawnOptionsScreen.SetActive(!spawnOptionsScreen.activeInHierarchy);
-        
-        
-
-
-        List<string> ops = new List<string>();
-        var supList = gameObject.GetComponent<SimManager>().structurePlant.supList;
-
-        for (int i = 0; i < supList.Count; i++) {
-            ops.Add("Supervisorio: " + (i+1));
-        }
-
-        spawnOptionsScreen.GetComponentInChildren<Dropdown>().ClearOptions();
-        spawnOptionsScreen.GetComponentInChildren<Dropdown>().AddOptions(ops);
-
-        if (spawnOptionsScreen.activeInHierarchy) {
-            string name = spawnOptionsScreen.GetComponentInChildren<Dropdown>().gameObject.GetComponentInChildren<Text>().text;
-
-            int selected = int.Parse(name.Split(':')[1]) - 1;
-            
-            stateInputField.GetComponent<InputField>().text = gameObject.GetComponent<SimManager>().structurePlant.supList[selected].initialState.ToString();
-             
-        }
+        // Open SpawnOptionScreen
+        spawnOptionsScreen.GetComponent<SpawnOptionsScreen>().SetStructurePlant(this.GetComponent<SimManager>().structurePlant);
+        spawnOptionsScreen.GetComponent<SpawnOptionsScreen>().Toggle();
 
     }
 
-    void SupervisorDropdownChanged() {
-
-        string name = spawnOptionsScreen.GetComponentInChildren<Dropdown>().gameObject.GetComponentInChildren<Text>().text;
-        int selected = int.Parse(name.Split(':')[1]) - 1;
-
-        stateInputField.GetComponent<InputField>().text = gameObject.GetComponent<SimManager>().structurePlant.supList[selected].initialState.ToString();
-
-    }
-
-    void SpawnBotListener() {
-
-        string name = spawnOptionsScreen.GetComponentInChildren<Dropdown>().gameObject.GetComponentInChildren<Text>().text;
-        int selected = int.Parse(name.Split(':')[1]) - 1;
-
-        gameObject.GetComponent<CentralController>().SpawnBot(selected);
-
-        spawnOptionsScreen.SetActive(false);
-
-    }
-
-    
 
 }

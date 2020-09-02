@@ -21,7 +21,8 @@ public class CentralController : MonoBehaviour
     public void Initialize() {
 
         heightMap = tileSystem.heightMap;
-        SpawnBot();
+        
+        HeightMapUp(SpawnBot().supervisorio.currentState.heightMap);
     }
 
     //Merge 2 heightmaps
@@ -49,7 +50,7 @@ public class CentralController : MonoBehaviour
 
     }
 
-    public TermiteFSMBrain SpawnBot(int index) {
+    public TermiteFSMBrain SpawnBot(int index, string customInit=null) {
 
         
         //Instantiate the bot
@@ -62,7 +63,7 @@ public class CentralController : MonoBehaviour
 
         //Initialize Termite Brain
         newBotBrain.manager = this.gameObject;
-        newBotBrain.Initialize(simManager.structurePlant.supList[index], externalEvents);
+        newBotBrain.Initialize(simManager.structurePlant.supList[index], externalEvents, customInit);
 
 
         //Add to botList

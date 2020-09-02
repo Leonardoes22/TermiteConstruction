@@ -16,13 +16,33 @@ public class FSM
     public State currentState; // Estado atual
     public Coord size;
 
-    public FSM(Supervisor sup) {
+    public FSM(Supervisor sup, string customInit=null) {
 
         eventsConteiner = sup.eventsContainer;
         statesConteiner = sup.statesContainer;
         transitionList = sup.transitionsList;
 
-        currentState = sup.initialState;
+
+        
+        if(customInit != null) {
+
+            foreach (var state in statesConteiner.Values) {
+
+                if (state.name == customInit) {
+                    currentState = state;
+                    break;
+                }
+                
+            }
+
+        }
+
+        if(currentState == null) {
+            currentState = sup.initialState;
+        }
+
+
+        
 
     }
 
@@ -233,7 +253,9 @@ public class FSM
 
         // Construtor XML
         public State(int id, string name, Coord size) {
-            
+
+            this.name = name;
+
             string[] stateInfo = name.Split('.');
 
             this.id = id;

@@ -6,7 +6,8 @@ using System.Xml.Linq;
 using System;
 using UnityEngine.PlayerLoop;
 
-public class StructurePlant {
+
+public class StructurePlant{
 
 
     public List<Supervisor> supList = new List<Supervisor>();

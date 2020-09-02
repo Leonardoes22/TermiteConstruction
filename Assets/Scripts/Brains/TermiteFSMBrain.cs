@@ -47,14 +47,14 @@ public class TermiteFSMBrain : MonoBehaviour {
 
     
 
-    public void Initialize(Supervisor sup, List<FSM.Event> previousEvents) {
+    public void Initialize(Supervisor sup, List<FSM.Event> previousEvents, string customInit = null) {
 
         // Set central controller
         centralController = manager.GetComponent<CentralController>();
 
         // Instantiate supervisor
         //supervisorio = new FSM(automaton);
-        supervisorio = new FSM(sup);
+        supervisorio = new FSM(sup, customInit);
 
         // Get initial gridosition - normally (0,0)
         position = supervisorio.currentState.GetPosition();
@@ -68,6 +68,7 @@ public class TermiteFSMBrain : MonoBehaviour {
         animationComponent.FixPosition();
 
         supervisorio.RunEvents(previousEvents);
+        
 
     }
     void Update() {
