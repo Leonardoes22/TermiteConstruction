@@ -28,7 +28,37 @@
         set => _heights[x - 1, y - 1] = value;
     }
 
-    
+
+    public static bool operator ==(HeightMap a, HeightMap b) {
+        for (int i = 1; i < a.Shape.x + 1; i++) {
+            for (int j = 1; j < a.Shape.y + 1; j++) {
+
+                if (!(a[i, j] == b[i, j])) {
+                    return false;
+                }
+
+
+            }
+        }
+
+        return true;
+    }
+
+    public static bool operator !=(HeightMap a, HeightMap b) {
+        
+        for (int i = 1; i < a.Shape.x + 1; i++) {
+            for (int j = 1; j < a.Shape.y + 1; j++) {
+
+                if(!(a[i, j] == b[i, j])) {
+                    return true;
+                }
+
+                
+            }
+        }
+
+        return false;
+    }
 
 
     // Sobrescreve ToString() para vizualizar o mapa de alturas

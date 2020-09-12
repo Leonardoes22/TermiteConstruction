@@ -22,7 +22,7 @@ public class FSM
         statesConteiner = sup.statesContainer;
         transitionList = sup.transitionsList;
 
-
+        MonoBehaviour.print(customInit);
         
         if(customInit != null) {
 

@@ -109,6 +109,14 @@ public class TermiteAnimationComponent : MonoBehaviour
             currentDirection = 3;
         }
 
+
+        if (brain.supervisorio.currentState.hasTile) {
+            myTileTransform.gameObject.GetComponent<MeshRenderer>().enabled = true;
+            grabberTransform.localEulerAngles = new Vector3(0, 0, 140);
+        }
+
+        
+
         if (debugMode) { print("FixPosition: " + transform.position); }
 
     }

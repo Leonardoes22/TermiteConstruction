@@ -36,7 +36,7 @@ public class SpawnOptionsScreen : MonoBehaviour
         startButton.GetComponentInChildren<Button>().onClick.AddListener(() => StartSimulation());
 
         //Supervisor Selector Dropdown
-        //supervisorDropdown.GetComponent<Dropdown>().onValueChanged.AddListener(delegate { SupervisorDropdownChanged(); });
+        supervisorDropdown.GetComponent<Dropdown>().onValueChanged.AddListener(delegate { SupervisorDropdownChanged(); });
     }
 
     // Update is called once per frame
@@ -64,15 +64,17 @@ public class SpawnOptionsScreen : MonoBehaviour
         if(interfaceMenu != null) {
             spawnBotButton.SetActive(false);
             stateDropdown.SetActive(false);
+            UpdateSupervisorList();
         }
         if(interfaceFSM != null) {
             startButton.SetActive(false);
             stateInputField.SetActive(false);
+            UpdateSupervisorList();
             UpdateStatesList();
         }
 
         
-        UpdateSupervisorList();
+        
         
     }
     public void Close() {
@@ -86,7 +88,7 @@ public class SpawnOptionsScreen : MonoBehaviour
     }
 
 
-
+    
     
     void UpdateSupervisorList() {
         List<string> ops = new List<string>();
@@ -104,8 +106,8 @@ public class SpawnOptionsScreen : MonoBehaviour
 
 
         List<string> stateOptions = new List<string>();
-        
-        var statesList = gameManager.GetComponent<SimManager>().structurePlant.supList[0].statesContainer.Values;
+
+        var statesList = gameManager.GetComponent<SimManager>().structurePlant.supList[GetSelectedSupervisor()].statesContainer.Values;
 
         foreach (var state in statesList) {
 
@@ -119,12 +121,13 @@ public class SpawnOptionsScreen : MonoBehaviour
         
         stateDropdown.GetComponentInChildren<Dropdown>().ClearOptions();
         stateDropdown.GetComponentInChildren<Dropdown>().AddOptions(stateOptions);
-
     }
 
 
     int GetSelectedSupervisor() {
+
         string name = spawnOptionsScreen.GetComponentInChildren<Dropdown>().gameObject.GetComponentInChildren<Text>().text;
+
         int selected = int.Parse(name.Split(':')[1]) - 1;
 
         return selected;
@@ -144,7 +147,20 @@ public class SpawnOptionsScreen : MonoBehaviour
 
     void StartSimulation() {
 
-        interfaceMenu.StartSimulation();
+        int selected = GetSelectedSupervisor();
+        string stateName = stateInputField.GetComponentsInChildren<Text>()[1].text;
+
+        foreach (var state in structurePlant.supList[selected].statesContainer.Values)
+        {
+            if(state.name == stateName)
+            {
+                interfaceMenu.StartSimulation(selected, stateName);
+                return ;
+            }
+        }
+
+
+        interfaceMenu.StartSimulation(selected);
 
     }
 
@@ -160,15 +176,18 @@ public class SpawnOptionsScreen : MonoBehaviour
     }
 
     
-    /*
+    
     void SupervisorDropdownChanged() {
 
-        int selected = GetSelectedSupervisor();
+        if (interfaceFSM != null)
+        {
+            UpdateStatesList();
+        }
 
-        stateInputField.GetComponent<InputField>().text = structurePlant.supList[selected].initialState.ToString();
+        
 
     }
-    */
+    
     /*
     public void GenerateHint() {
 

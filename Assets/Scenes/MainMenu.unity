@@ -121,6 +121,18 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &84608406 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2403795649838484477, guid: 16c9b18163cbe63409ab95c71c67a119,
+    type: 3}
+  m_PrefabInstance: {fileID: 1535410027}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &84608407 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2403795649838484478, guid: 16c9b18163cbe63409ab95c71c67a119,
+    type: 3}
+  m_PrefabInstance: {fileID: 1535410027}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &292815253
 GameObject:
   m_ObjectHideFlags: 0
@@ -669,6 +681,85 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1535410027
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 1973120633}
+    m_Modifications:
+    - target: {fileID: 2403795649838484477, guid: 16c9b18163cbe63409ab95c71c67a119,
+        type: 3}
+      propertyPath: m_Name
+      value: SpawnOptionsScreen
+      objectReference: {fileID: 0}
+    - target: {fileID: 2403795649838484477, guid: 16c9b18163cbe63409ab95c71c67a119,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2403795649838484478, guid: 16c9b18163cbe63409ab95c71c67a119,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -11
+      objectReference: {fileID: 0}
+    - target: {fileID: 2403795649838484478, guid: 16c9b18163cbe63409ab95c71c67a119,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 195
+      objectReference: {fileID: 0}
+    - target: {fileID: 2403795649838484478, guid: 16c9b18163cbe63409ab95c71c67a119,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 3.4283864
+      objectReference: {fileID: 0}
+    - target: {fileID: 2403795649838484478, guid: 16c9b18163cbe63409ab95c71c67a119,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2403795649838484478, guid: 16c9b18163cbe63409ab95c71c67a119,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2403795649838484478, guid: 16c9b18163cbe63409ab95c71c67a119,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2403795649838484478, guid: 16c9b18163cbe63409ab95c71c67a119,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2403795649838484478, guid: 16c9b18163cbe63409ab95c71c67a119,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2403795649838484478, guid: 16c9b18163cbe63409ab95c71c67a119,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2403795649838484478, guid: 16c9b18163cbe63409ab95c71c67a119,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2403795649838484478, guid: 16c9b18163cbe63409ab95c71c67a119,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2403795649838484479, guid: 16c9b18163cbe63409ab95c71c67a119,
+        type: 3}
+      propertyPath: interfaceMenu
+      value: 
+      objectReference: {fileID: 2114375636}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 16c9b18163cbe63409ab95c71c67a119, type: 3}
 --- !u!1 &1721279792
 GameObject:
   m_ObjectHideFlags: 0
@@ -986,6 +1077,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 902486804}
+  - {fileID: 84608407}
   m_Father: {fileID: 292815254}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1060,4 +1152,5 @@ MonoBehaviour:
   menuSelection: {fileID: 1973120629}
   menuDisplay: {fileID: 710948974}
   placeHolder: {fileID: 1951751342}
+  spawnOptionScreen: {fileID: 84608406}
   fullScreen: 0

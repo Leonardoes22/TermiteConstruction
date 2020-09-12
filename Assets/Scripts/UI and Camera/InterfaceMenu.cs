@@ -16,6 +16,8 @@ public class InterfaceMenu : MonoBehaviour {
     public GameObject menuDisplay;
     public GameObject placeHolder;
 
+    public GameObject spawnOptionScreen;
+
     public bool fullScreen;
 
     Dictionary<string, StructurePlant> structurePlantList = new Dictionary<string, StructurePlant>();
@@ -34,9 +36,9 @@ public class InterfaceMenu : MonoBehaviour {
         ListSupervisors();
 
         //Create Start Button
-        GameObject btn = CreateButton(new Vector3(0, 0, 0));
-        SetButtonText(btn, "Start");
-        btn.GetComponent<Button>().onClick.AddListener(StartClicked);
+        //GameObject btn = CreateButton(new Vector3(0, 0, 0));
+        //SetButtonText(btn, "Start");
+        //btn.GetComponent<Button>().onClick.AddListener(StartClicked);
     }
 
     // Update is called once per frame
@@ -95,8 +97,12 @@ public class InterfaceMenu : MonoBehaviour {
         DestroyDisplay();
 
         ShowDisplay(structurePlantList[selectedBtn.GetComponentInChildren<Text>().text]);
-    }
 
+        spawnOptionScreen.GetComponent<SpawnOptionsScreen>().structurePlant = structurePlantList[selectedBtn.GetComponentInChildren<Text>().text];
+        spawnOptionScreen.GetComponent<SpawnOptionsScreen>().Open();
+        
+    }
+    /*
     void StartClicked() {
 
         if (selectedBtn != null) {
@@ -104,7 +110,7 @@ public class InterfaceMenu : MonoBehaviour {
         }
 
     }
-
+    */
     void DisplayHandler() {
 
         if(selectedBtn != null) {
@@ -116,15 +122,23 @@ public class InterfaceMenu : MonoBehaviour {
     }
 
 
-    void Initialize() {
+    public void StartSimulation(int firstSup, string firstState="default") {
 
-        GameObject sceneInfo = new GameObject("SceneInfo");
-        sceneInfo.tag = "SceneInfo";
-        sceneInfo.AddComponent<Text>();
-        sceneInfo.GetComponent<Text>().text = selectedBtn.GetComponentInChildren<Text>().text;
-        DontDestroyOnLoad(sceneInfo);
+        if (selectedBtn != null) {
+            GameObject sceneInfo = new GameObject("SceneInfo");
+            sceneInfo.tag = "SceneInfo";
+            sceneInfo.AddComponent<Text>();
+            
+            sceneInfo.GetComponent<Text>().text = selectedBtn.GetComponentInChildren<Text>().text;
+            sceneInfo.GetComponent<Text>().text += "-" + firstSup;
+            sceneInfo.GetComponent<Text>().text += "-" + firstState;
 
-        SceneManager.LoadScene("TileSystem_Reform");
+
+            DontDestroyOnLoad(sceneInfo);
+
+            SceneManager.LoadScene("TileSystem_Reform");
+        }
+
     }
 
     void ShowDisplay(StructurePlant supervisorio) {
