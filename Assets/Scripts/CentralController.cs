@@ -18,11 +18,11 @@ public class CentralController : MonoBehaviour
     public HeightMap heightMap;
     int uidCount = 0;
 
-    public void Initialize() {
+    public void Initialize(int firstSup, string firstState) {
 
         heightMap = tileSystem.heightMap;
         
-        HeightMapUp(SpawnBot().supervisorio.currentState.heightMap);
+        HeightMapUp(SpawnBot(firstSup, firstState).supervisorio.currentState.heightMap);
     }
 
     //Merge 2 heightmaps

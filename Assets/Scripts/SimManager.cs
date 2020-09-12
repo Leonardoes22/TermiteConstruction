@@ -20,6 +20,9 @@ public class SimManager : MonoBehaviour {
 
     //Scenario Parameters
     public string supervisorName;
+    public int firstSup;
+    public string firstState;
+
     public bool isMultibot { get { return structurePlant.isMultiBot; } }
     Coord size { get { return structurePlant.shape; } }
 
@@ -33,7 +36,7 @@ public class SimManager : MonoBehaviour {
         tileSystem.Initialize(size.x, size.y, "TermiteTile");
 
         //Reference CentralController
-        centralController.Initialize();
+        centralController.Initialize(firstSup, firstState);
 
         //Initialize InterfaceFSM
         interfaceFSM.Initialize();
@@ -47,7 +50,9 @@ public class SimManager : MonoBehaviour {
         GameObject sceneInfo = GameObject.FindGameObjectWithTag("SceneInfo");
 
         if (sceneInfo != null) {
-            supervisorName = sceneInfo.GetComponent<Text>().text;
+            supervisorName = sceneInfo.GetComponent<Text>().text.Split('-')[0];
+            firstSup = int.Parse(sceneInfo.GetComponent<Text>().text.Split('-')[1]);
+            firstState = sceneInfo.GetComponent<Text>().text.Split('-')[2];
             print("Loaded: " + supervisorName + "supervisor");
         } else {
             supervisorName = defaultSupervisor;

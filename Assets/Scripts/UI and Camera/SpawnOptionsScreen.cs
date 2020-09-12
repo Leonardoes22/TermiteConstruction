@@ -86,7 +86,7 @@ public class SpawnOptionsScreen : MonoBehaviour
     }
 
 
-
+    
     
     void UpdateSupervisorList() {
         List<string> ops = new List<string>();
@@ -144,7 +144,20 @@ public class SpawnOptionsScreen : MonoBehaviour
 
     void StartSimulation() {
 
-        interfaceMenu.StartSimulation();
+        int selected = GetSelectedSupervisor();
+        string stateName = stateInputField.GetComponentsInChildren<Text>()[1].text;
+
+        foreach (var state in structurePlant.supList[selected].statesContainer.Values)
+        {
+            if(state.name == stateName)
+            {
+                interfaceMenu.StartSimulation(selected, stateName);
+                return ;
+            }
+        }
+
+
+        interfaceMenu.StartSimulation(selected);
 
     }
 
