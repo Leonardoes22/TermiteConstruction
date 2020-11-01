@@ -1,7 +1,7 @@
 # TermiteConstruction
 
 ## Interface
-[](Manual1.png)
+![](ManualImg/Manual1.png)
 1. *Start*: Inicia a simulação do cenário escolhido.
 1. *Cenários*: Seleciona o cenário desejado. (Entre os arquivos XML disponíveis)
 1. *Botão Fullscreen*: Alterna entre o modo da tela.
@@ -23,7 +23,7 @@
 
 ## Adicionando novos cenários
 Para adicionar novos cenários ao simulador basta mover o arquivo XML desejado à pasta ".../TermiteSim/Assets/Resources/Supervisors". 
-O arquivo necessita de um automato com nome conforme indicado no modelo da figura [](SupervisorModel.png)
+O arquivo necessita de um automato com nome conforme indicado no modelo da figura ![](ManualImg/SupervisorModel.png)
 
 
 ## Bugs Conhecidos
