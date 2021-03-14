@@ -91,6 +91,17 @@ public class TermiteFSMBrain : MonoBehaviour {
 
     }
 
+
+    //Update Bot coordinate position to match state
+    public void UpdatePosition() {
+        position = supervisorio.currentState.GetPosition();
+    }
+
+    /*
+     * CommunicationComponent Functions
+     */
+
+    // Process action intention and call communication to ask for permission
     public void ProcessIntent(FSM.Event _event) {
         //print(Time.time +"- ID:" + id +"- From: " + position + " Called Intent: (" + _event + "), alone?: " + isAlone);
         //FSM.Event _event = supervisorio.eventsConteiner[eventID];
@@ -139,7 +150,14 @@ public class TermiteFSMBrain : MonoBehaviour {
 
     }
 
-    //AI functions
+    // Set a time to wait after action was denied
+    public void ActionDenied() {
+        wait = manager.GetComponent<SimManager>().isFastAnim ? 0.5f : 0f;
+    }
+
+    /*
+     * AI Functions
+     */
     void UsePlanMode() {
         if (myPlan.Count == 0) {
             PlanAction(10, 5);
@@ -166,11 +184,8 @@ public class TermiteFSMBrain : MonoBehaviour {
         
     }
 
-
     void UseRandomMode() {
         if (!communicationComponent.IsTransitioning && !animationComponent.IsAnimating) {
-
-            
             ProcessIntent(ChoseAtRandom());
         }
     }
@@ -272,13 +287,9 @@ public class TermiteFSMBrain : MonoBehaviour {
     }
 
 
-    //Update Bot coordinate position to match state
-    public void UpdatePosition() {
-        position = supervisorio.currentState.GetPosition();
-    }
+    
 
-    public void ActionDenied() {
-        wait =  manager.GetComponent<SimManager>().isFastAnim ? 0.5f : 0f ;
-    }
+
+    
 
 }
