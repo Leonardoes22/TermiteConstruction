@@ -18,7 +18,7 @@ public class MovementTestgroundManager : MonoBehaviour
         robotAnimation = robot2test.GetComponent<DroneAnimationComponent>();
 
         tileSystem.Initialize(5, 3, "TermiteTile");
-        robotAnimation.Initialize(tileSystem);
+        robotAnimation.Initialize(gameObject);
 
         //robotAnimation.TestAnimation();
 

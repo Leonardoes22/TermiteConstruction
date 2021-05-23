@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class DroneAnimationComponent : MonoBehaviour
 {
@@ -66,52 +67,57 @@ public class DroneAnimationComponent : MonoBehaviour
     Vector3 initialPos;
     int nextDirection;
 
-    // Local variables for independence
+    // Local variables: added for independence of the component
     public Coord localPosition;
     public Coord destinyCoord;
 
     
+    // External Commands
+    //------------------
 
-    public void Initialize(TermiteTS ts) {
-        tileSystem = ts;
+    public void Initialize(GameObject manager) {
+        // Initializes the robot's animationComponent by getting the tileSystem reference.
+        // Used instead of start because it must be called after first frame.
+
+
+        tileSystem = manager.GetComponent<TermiteTS>();
         isPlacing = false; //fix starting with isPlacing == true;
 
-        localPosition = new Coord(1, 1);
-        FixPosition();
-
-    }
-
-    void FixPosition() {
-
-        coreTransform.position = tileSystem.centreMap[localPosition];
-        coreTransform.position += new Vector3(0,40f,0);
-
-        print(localPosition + "-" + tileSystem.centreMap[localPosition]);
-        print(coreTransform.position);
-
-    }
-
-    public void JumpToNeighbor(string neighbor) {
-
-        localPosition += commandDict[neighbor];
+        localPosition = new Coord(1, 1); // Starting position
         FixPosition();
 
     }
 
     public void CommandAnimation(string command) {
+        // Temporary function used by external agent to call an animation
 
-        switch (command) {
+        string movementType = GetMovementType(command);
 
-            case "get":
-                myTileTransform.gameObject.GetComponent<MeshRenderer>().enabled = true;
+        switch (movementType) {
+
+            case "typeGet":
+                GrabTile();
                 break;
 
-            case "put":
-                myTileTransform.gameObject.GetComponent<MeshRenderer>().enabled = false;
+            case "typePlace":
+                PlaceTile();
                 break;
+
+            case "typeMovement":
+                MoveInGrid(command);
+                break;
+
+            case "typeMovementIn":
+                EnterGrid(command);
+                break;
+
+            case "typeMovementOut":
+                ExitGrid();
+                break;
+
 
             default:
-                JumpToNeighbor(command);
+                if (debugMode) { print($"Movement {command} of type {movementType} not implemented"); }
                 break;
         }
 
@@ -119,19 +125,91 @@ public class DroneAnimationComponent : MonoBehaviour
     }
 
 
-    // Start is called before the first frame update
-    void Start()
-    {
+    // Internal Animation Commands
+    //--------------------------
 
-        foreach (var item in commandDict) {
-            print(item);
+    private string GetMovementType(string eventLabel) {
+
+        string[] movementEvents = { "u", "d", "l", "r", "ne", "nw", "se", "sw" };
+
+        if (movementEvents.Contains(eventLabel)) {
+            return "typeMovement";
+        } else if (eventLabel.StartsWith("in")) {
+            return "typeMovementIn";
+        } else if (eventLabel.StartsWith("out")) {
+            return "typeMovementOut";
+        } else if (eventLabel == "getBrick") {
+            return "typeGet";
+        } else if (eventLabel[0] == 'a') {
+            if (eventLabel.EndsWith("_r2")) {      
+                return "typePlaceR2";
+            } else {
+                return "typePlace";
+            }
+        } else {
+            return "typeOther";
         }
-
     }
 
-    // Update is called once per frame
-    void Update()
-    {
+    private void FixPosition() {
+        // Fix the robots spacial position based on localPosition
+        // in case that any animation is imprecise
+
+        // Checks if in grid or outside
+        Vector3 correctPosition = tileSystem.InGrid(localPosition) ? tileSystem.centreMap[localPosition] : new Vector3(-27.5f * 1.5f, 5f, -27.5f * 1.5f);
+
+        // Corrects robot position
+        coreTransform.position = correctPosition; // In 2D
+        coreTransform.position += new Vector3(0,40f,0); // Fix Height
+
+        if (debugMode) {
+            print(localPosition + "-" + correctPosition);
+            print(coreTransform.position);
+        }
         
+
     }
+
+
+
+    // Animation Commands
+
+
+
+    private void MoveInGrid(string neighbor) {
+
+        localPosition += commandDict[neighbor];
+        FixPosition();
+    }
+
+    private void EnterGrid(string inCommand) {
+
+        string inStr = inCommand.Substring(2);
+        Coord entryPosition = new Coord(int.Parse(inStr[0].ToString()), int.Parse(inStr[1].ToString()));
+
+        localPosition = entryPosition;
+        FixPosition();
+
+    }
+
+    private void ExitGrid() {
+
+        localPosition = Coord.origin;
+        print(Coord.origin);
+        FixPosition();
+
+    }
+
+    private void PlaceTile() {
+        myTileTransform.gameObject.GetComponent<MeshRenderer>().enabled = false;
+        FixPosition();
+    }
+
+    private void GrabTile() {
+        myTileTransform.gameObject.GetComponent<MeshRenderer>().enabled = true;
+        FixPosition();
+    }
+
+
+    // Animation Routines
 }

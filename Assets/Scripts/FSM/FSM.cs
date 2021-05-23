@@ -253,9 +253,7 @@ public class FSM
 
         // Construtor XML
         public State(int id, string name, Coord size) {
-
             this.name = name;
-
             string[] stateInfo = name.Split('.');
 
             this.id = id;

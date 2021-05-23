@@ -51,6 +51,13 @@ public class TermiteTS : MonoBehaviour {
 
     }
 
+    // Função Auxiliar Externa
+    public bool InGrid(Coord coord) {
+
+        return (coord.x >= 1 && coord.y >= 1 && coord.x <= gridSize.x && coord.y <= gridSize.y);
+
+    }
+
     // Acessório Gráfico de Iniciaização 
     void LimitGrid() {
 

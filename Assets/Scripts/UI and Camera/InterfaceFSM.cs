@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class InterfaceFSM : MonoBehaviour {
 
-    // Interface
+    // Basic Interface
     public GameObject canvas;
     public GameObject stateDisplay;
     public GameObject autoToggle;
@@ -14,6 +14,7 @@ public class InterfaceFSM : MonoBehaviour {
     public GameObject exitButton;
     public GameObject fastAnimToggle;
 
+    // Multibot Compat
     public GameObject disbandButton;
     public GameObject addBotButton;
 
