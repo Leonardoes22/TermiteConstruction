@@ -37,7 +37,7 @@ public class MovementTestgroundManager : MonoBehaviour
     public void PlayAnimation() {
 
         string command = commandField.textComponent.text;
-        robotAnimation.CommandAnimation(command);
+        //robotAnimation.CallAnimation(command);
 
     }
 

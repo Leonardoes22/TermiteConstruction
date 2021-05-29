@@ -7,7 +7,7 @@ public class TermiteDroneBrain : MonoBehaviour
 {
 
     // Termite Components
-    public DroneAnimationComponent animationComponent;
+    public AnimationComponent animationComponent;
     public DroneInterfaceComponent interfaceComponent;
 
     //Supervisor FSM
@@ -36,29 +36,22 @@ public class TermiteDroneBrain : MonoBehaviour
 
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     public void ProcessIntent(int eventId) {
 
 
         FSM.Event evento = supervisor.eventsConteiner[eventId];
         supervisor.TriggerEvent(evento);
 
-        animationComponent.CommandAnimation(evento.label);
+        StartCoroutine(animationComponent.CallAnimation(evento.label, FinishedAnimation));
+
+    }
+
+    private void FinishedAnimation() {
+        // Activated when an animation finishes.
+        // I used to update states
 
         interfaceComponent.UpdateStateButtons();
         UpdatePosition();
-
     }
 
     //Update Bot coordinate position to match state

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-public class DroneAnimationComponent : MonoBehaviour
+public class DroneAnimationComponent : AnimationComponent
 {
 
     /* 
@@ -43,6 +43,7 @@ public class DroneAnimationComponent : MonoBehaviour
     // Modifiers
     public bool fastMode;
     public bool debugMode;
+    public float movingSpeed = 60f;
 
     // Animation queue
     public List<Action> animationBuffer = new List<Action>();
@@ -50,12 +51,12 @@ public class DroneAnimationComponent : MonoBehaviour
     // Animation states
     public bool isGrabbing = false;
     public bool isPlacing = false;
-    bool isMovingForward = false;
+    bool isMovingInGrid = false;
     int isTurning = 0;
     public bool IsAnimating { get; private set; } = false;
     bool IsAnimatingStep {
         get {
-            if (isGrabbing || isPlacing || isMovingForward || isTurning != 0) {
+            if (isGrabbing || isPlacing || isMovingInGrid || isTurning != 0) {
                 return true;
             } else {
                 return false;
@@ -65,16 +66,26 @@ public class DroneAnimationComponent : MonoBehaviour
 
     // Animation Temp Variables
     Vector3 initialPos;
-    int nextDirection;
+    Vector3 nextPos;
 
     // Local variables: added for independence of the component
     public Coord localPosition;
     public Coord destinyCoord;
 
-    
+    // Update Routine
+
+    void Update() {
+
+        if (isMovingInGrid) {
+            AnimateMoveInGrid();
+        }
+    }
+
+
     // External Commands
     //------------------
 
+    override
     public void Initialize(GameObject manager) {
         // Initializes the robot's animationComponent by getting the tileSystem reference.
         // Used instead of start because it must be called after first frame.
@@ -83,16 +94,18 @@ public class DroneAnimationComponent : MonoBehaviour
         tileSystem = manager.GetComponent<TermiteTS>();
         isPlacing = false; //fix starting with isPlacing == true;
 
-        localPosition = new Coord(1, 1); // Starting position
+        localPosition = new Coord(0, 0); // Starting position
         FixPosition();
 
     }
 
-    public void CommandAnimation(string command) {
+    override
+    public IEnumerator CallAnimation(string command, Action onComplete) {
         // Temporary function used by external agent to call an animation
 
         string movementType = GetMovementType(command);
 
+        // Setup animation based on animation type
         switch (movementType) {
 
             case "typeGet":
@@ -121,6 +134,13 @@ public class DroneAnimationComponent : MonoBehaviour
                 break;
         }
 
+        // Wait for animation to finish to warn who called it
+        while (IsAnimatingStep) {
+            yield return null;
+        }
+
+
+        onComplete?.Invoke();
 
     }
 
@@ -174,12 +194,17 @@ public class DroneAnimationComponent : MonoBehaviour
 
     // Animation Commands
 
-
-
     private void MoveInGrid(string neighbor) {
 
-        localPosition += commandDict[neighbor];
-        FixPosition();
+        destinyCoord = localPosition + commandDict[neighbor];
+
+        initialPos = tileSystem.centreMap[localPosition];
+        nextPos = tileSystem.centreMap[destinyCoord];
+
+        isMovingInGrid = true;
+
+        if (debugMode) { print("Command: MoveInGrid to "+ neighbor); }
+
     }
 
     private void EnterGrid(string inCommand) {
@@ -212,4 +237,28 @@ public class DroneAnimationComponent : MonoBehaviour
 
 
     // Animation Routines
+
+    private void AnimateMoveInGrid() {
+
+        // Step Init
+        Vector3 currentPos = coreTransform.position;
+        currentPos = Vector3.ProjectOnPlane(currentPos, Vector3.up); // Get 2D position
+        Vector3 movingDirection = (nextPos - currentPos).normalized;
+
+        // Animation 
+        coreTransform.Translate(movingDirection * Time.deltaTime*movingSpeed);
+
+        // End Animation Condition
+        bool endCondition = Vector3.Distance(currentPos, nextPos) <= 1f;
+        if (endCondition) {
+
+            localPosition = destinyCoord;
+            isMovingInGrid = false;
+            FixPosition();
+        }
+
+    }
+
+
+
 }
