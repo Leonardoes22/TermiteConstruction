@@ -10,6 +10,8 @@ public class SoloDroneInterface : MonoBehaviour
     public GameObject canvas;
     public GameObject stateDisplay;
     public GameObject endText;
+    public GameObject extraEventsZone;
+    public GameObject allowedEventsZone;
 
 
     // Solo Drone
@@ -45,8 +47,8 @@ public class SoloDroneInterface : MonoBehaviour
 
             countBtn++;
 
-            GameObject btn = (GameObject)Instantiate(Resources.Load("Button"), new Vector3(860, 540 - countBtn * 30, 0), Quaternion.identity);
-            btn.transform.SetParent(canvas.transform, false);
+            GameObject btn = (GameObject)Instantiate(Resources.Load("Button"), new Vector3(0, 200 - countBtn * 30, 0), Quaternion.identity);
+            btn.transform.SetParent(extraEventsZone.transform, false);
             btn.tag = "StateButton";
 
             int eventId = e.id;
@@ -58,16 +60,15 @@ public class SoloDroneInterface : MonoBehaviour
         }
 
         // Temp code for debug feasible external events
-        countBtn++;
-        countBtn++;
+        countBtn=0;
         foreach (var e in soloDrone.supervisor.FeasibleEvents(soloDrone.supervisor.currentState)) {
 
 
 
             if (!feasibleEvents.Contains(e)) {
                 countBtn++;
-                GameObject externalEventLabel = (GameObject)Instantiate(Resources.Load("Text"), new Vector3(860, 540 - countBtn * 30, 0), Quaternion.identity);
-                externalEventLabel.transform.SetParent(canvas.transform, false);
+                GameObject externalEventLabel = (GameObject)Instantiate(Resources.Load("Text"), new Vector3(0, 200 - countBtn * 30, 0), Quaternion.identity);
+                externalEventLabel.transform.SetParent(allowedEventsZone.transform, false);
 
                 externalEventLabel.GetComponent<Text>().text = e.label;
                 externalEventLabel.GetComponent<Text>().fontSize = 20;
