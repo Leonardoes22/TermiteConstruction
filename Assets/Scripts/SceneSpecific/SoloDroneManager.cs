@@ -6,7 +6,6 @@ public class SoloDroneManager : MonoBehaviour
 {
 
     public TermiteTS tileSystem;
-    public GameObject drone2test;
     public TermiteDroneBrain droneBrain;
 
 

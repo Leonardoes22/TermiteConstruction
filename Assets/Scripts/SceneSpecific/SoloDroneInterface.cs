@@ -55,7 +55,7 @@ public class SoloDroneInterface : MonoBehaviour
             string eventLabel = e.label;
 
             btn.GetComponentInChildren<Text>().text = eventLabel;
-            btn.GetComponent<Button>().onClick.AddListener(() => soloDrone.interfaceComponent.StateButtonListener(eventId));
+            //btn.GetComponent<Button>().onClick.AddListener(() => soloDrone.interfaceComponent.StateButtonListener(eventId));
 
         }
 
