@@ -2,33 +2,27 @@
 
 ## Interface
 ![](Manual1.png)
-1. *Start*: Inicia a simulação do cenário escolhido.
-1. *Cenários*: Seleciona o cenário desejado. (Entre os arquivos XML disponíveis)
-1. *Botão Fullscreen*: Alterna entre o modo da tela.
-1. *Pré-Visualização*: Visualização da estrutura final do cenário.
-1. *Sair*: Retorna ao menu.
-1. *Add Bot*: Adiciona um robô. (Caso permitido no cenário)
-1. *Fast Animation*: Ativa animações instantâneas.
-1. *Auto*: Alterna entre modo automático e manual.
-1. *Disband*: Remove robô do cenário.
-1. *Estado*: Mostra o estado atual do robô selecionado.
-1. *Eventos*: Permite selecionar os eventos no modo manual do robô.
-1. *Robô Selecionado*: Borda azul que indica que o robô esta selecionado.
+1. *Start*: Initializes the simulation of the selected scenario.
+1. *Scenarios*: Selection of the desired scenario. (Between the available XML files)
+1. *Fullscreen Button*: Switches _fullscreen_ on or off.
+1. *Structure Preview*: Vizualisation of the scenario's final structure.
+1. *Sair*: Return to menu.
+1. *Add Bot*: Add a robot. (If possible in the selected scenario)
+1. *Fast Animation*: Activates instant animations.
+1. *Auto*: Alternates between manual control and automatic mode.
+1. *Disband*: Removes robot from the scenario.
+1. *States*: Shows the state of the selected robot.
+1. *Events*: Allows the selection of events during the manual control mode.
+1. *Selected Robot*: A blue border indicates which is the current selected robot.
 
-## Câmera e Controle
+## Camera and Control
 
-**Pré-Vizualizador**: Botão esquerdo do mouse para girar a camera e *scroll* para controlar o zoom.
+**Structure Preview**: Use the left mouse button to turn the camere angle and the _scroll_ wheel for zooming in and out.
 
-**Simulador**: Controles do pré-visualizador + *WASD* para mover a câmera e *shift* para aumentar a velocidade. Para selecionar um robô basta clicar sobre ele com o botão esquerdo do mouse.
+**Simulator**: **Structure Preview** controls + *WASD* to move the camera and *shift* the move faster. To select a robot it suffices to click on it with the left mouse button.
 
-## Adicionando novos cenários
-Para adicionar novos cenários ao simulador basta mover o arquivo XML desejado à pasta ".../TermiteSim/Assets/Resources/Supervisors". 
-O arquivo necessita de um automato com nome conforme indicado no modelo da figura ![](SupervisorModel.png)
+## Adding New Scenarios
+To add new scenarios to the simulator it suffices to move the desired XML file to the folder ".../TermiteSim/Assets/Resources/Supervisors". 
+The file must contain an automaton with its name as in the example of the following image:
 
-
-## Bugs Conhecidos
-
-- Logo no início da simulação dois robôs podem tentar colocar um *title* nas posições de entrada e saída ocasionando um *crash* no sistema. Tomar cuidado quando inicializar o modo automático para não acontecer isso.
-
-- As vezes os robôs decidem ir executar uma ação que utiliza a mesma posição do *grid*, caso algum dos robôs não tenha outra possibilidade de ação, é possível que os robôs fiquem "confusos".
-- Desabilitar o modo automático e selecionar um evento para o robô cancela a execução do evento atual com um bug gráfico.
+![](SupervisorModel.png)
